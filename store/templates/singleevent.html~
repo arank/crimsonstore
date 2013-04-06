@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+        <div id="singleevent">
+                <p>Name: {{ event.name }}</p>
+                <p>Category: {{ event.category.name }}</p>
+                <p>Description: {{ event.description }}</p>
+                <p>Price: {{ event.price_in_dollars }}</p>
+        </div>
+        
+       
+        <div id="photolist">
+                {% for photo in photos %}
+              
+                 <div class="simpleCart_shelfItem">
+                <h2 class="item_name"> {{ event.name }} </h2>
+                <p> <p><img src="{{ photo.photo.url }}"/></p> <br>
+                <span class="item_price"> {{ event.price_in_dollars }} </span><br>
+                <a class="item_add" href="javascript:;"> Add to Cart </a></p>
+                </div>
+                {% endfor %}
+        </div>
+
+{% endblock %}

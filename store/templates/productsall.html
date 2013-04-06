@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+        <h1> Products </h1>
+        <div id="productlist">
+                {% for product in products %}
+               <p><a href="/products/{{ product.slug }}/"><img src="{{ product.photo.url }}"/>         {{ product }}</a></p>
+                {% endfor %}
+        </div>
+        
+        <h1> Event Photos </h1>
+        <div id="eventlist">
+                {% for event in events %}
+               <p><a href="/events/{{ event.slug }}/"> {{ event }}</a></p>
+                {% endfor %}
+        </div>
+{% endblock %}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+
+
+
+    <head>
+        {% load staticfiles %}
+        <meta charset="utf-8"/>
+
+        <meta name="description" content="The Crimson Store"/>
+
+        <link rel="shortcut icon" href="img/Crimson_Store_Logo_2_small.ico"> <!-- this is the small photo in the tab -->
+        <link rel="apple-touch-icon" href="#.png" />  <!-- this uploads the icon for apple's homescreen shortcuts-->
+        <meta name="apple-mobile-web-app-title" content="#">  <!-- this changes the default name when on the homescreen in apple-->
+
+        <link href="css/bootstrap.css" rel="stylesheet"/> <!-- if folder /css folder is in the same spot as the html file-->
+        <link href="css/bootstrap-responsive.css" rel="stylesheet"/>
+        <link href="css/stylesheet.css" rel="stylesheet"/>
+
+                <title>The Crimson Store</title>
+        
+        <script src="{% static "simpleCart.js" %}"></script>
+        <script src="js/bootstrap.js"></script>
+
+    </head>
+
+
+
+    <body>
+
+    	<div class="container">
+		    <div class="masthead">
+
+          <div class="search">
+            <form action="search.php" method="get">
+            <div class="input-prepend">
+              <button type="submit" class="btn"><i class="icon-search"></i></button>
+              <input name="query" placeholder="Search the Crimson Store" type="text" />
+            </div>
+          </div>
+          <div class="header">
+            <img src="img/logo.jpg" style="width:40px; height:40px; float:left;">
+            <h3>The Crimson Store</h3> 
+          </div>
+
+    			<div class="navbar">
+      				<div class="navbar-inner">
+                  <div class="cart">
+                    <a href="#" class="btn btn-danger">go to cart <i class="icon-shopping-cart icon-white"></i></a>
+                  </div>
+        					<div class="container">
+          						<ul class="nav">
+                   <!--      <li><input type="text" /></li> -->
+            						<li class="active"><a href="page_home.html">Home</a></li>
+                        <li><a href="page_products.html">Products</a></li>
+                        <li><a href="page_photos.html">Photos</a></li>
+                        <li><a href="page_issues.html">Issues</a></li>
+        					</div>
+      				</div>
+    			</div>
+			</div>
+		  </div>
+
+        
+         <div id="pageContainer">
+         {% block content %}
+         {% endblock %}
+         </div>
+        
+
+    <div id="feedback">
+          <a class="white" target="_blank" href="#">&raquo; report a bug!</a><br>
+          <a class="white" target="_blank" href="#">&raquo; give us feedback!</a>
+      </div>
+
+      <div id="bottom">
+          <div class="footer crimson">
+              <a class="footer" href="www.example.com">about us</a> | 
+              <a class="footer" target="_blank" href="mailto:arankhanna@college.harvard.edu?subject=Crimson%20Online%20Store">contact us</a> <br/>
+              Copyright &#169; 2013 by The Harvard Crimson
+          </div>
+      </div>
+    </body>
+</html>

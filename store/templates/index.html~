@@ -1,0 +1,4 @@
+{% extends "base.html" %}
+{% block content %}
+        <a href="/products/"> View the product list </a>
+{% endblock %}
