@@ -1,22 +1,80 @@
 {% extends "base.html" %}
+
+
 {% block content %}
-        <div id="singleevent">
-                <p>Name: {{ event.name }}</p>
-                <p>Category: {{ event.category.name }}</p>
-                <p>Description: {{ event.description }}</p>
-                <p>Price: {{ event.price_in_dollars }}</p>
-        </div>
+        <div class="container">
+          						<ul class="nav">
+                   <!--      <li><input type="text" /></li> -->
+            						<li><a href="/">Home</a></li>
+                        <li><a href="/products/">Products</a></li>
+                        <li class="active"><a href="/events/">Photos</a></li>
+                        <li><a href="">Issues</a></li>
+        					</ul>
+                                </div>
+      				</div>
+    			</div>
+			</div>
+		  </div>    
+                
+        
+        <div class="sectiontitle">
+        <hr>
         
        
-        <div id="photolist">
-                {% for photo in photos %}
-                 <div class="simpleCart_shelfItem">
-                <h2 class="item_name"> {{ event.name }} </h2>
-                <p> <p><img src="{{ photo.photo.url }}"/></p> <br>
-                <span class="item_price"> {{ event.price_in_dollars }} </span><br>
-                <a class="item_add" href="javascript:;"> Add to Cart </a></p>
-                </div>
-                {% endfor %}
+
+
+                <ul class="thumbnails">
+                        <li class="span9">
+                          <div class="thumbnail">
+                          <div class="simpleCart_shelfItem">
+                            <table>
+                              <tr>
+                                <td>
+                                  <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="{{ event.photo1.url }}">
+                                </td>
+                                <td>
+                                  <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="{{ event.photo2.url }}">
+                                </td>
+                                <td>
+                                  <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="{{ event.photo3.url }}">
+                                </td>
+                              </tr>
+                            </table>
+                            <div class="caption" style="float:clear;">
+                                    <h2 class="item_name">{{ event.name }}</h2>
+                                    <p>{{ event.description }}</p>
+                                    <h5 class="item_price"> All Photos Package Price- ${{ event.price_in_dollars }} </h5><br>
+                                    <p><a href="javascript:;" class="item_add btn btn-danger">Add Package to Cart <i class="icon-shopping-cart icon-white"></i></a>
+                            </div>
+                          </div>
+                        </div>
+                        </li>
+                      </ul>
+        <hr>
         </div>
+
+         <ul class="thumbnails">
+       
+                {% for photo in photos %}
+          
+                <li class="span3">
+                  <div class="thumbnail">
+                    <div class="simpleCart_shelfItem">
+                    <img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url }}">
+                    <div class="caption">
+                      <div class="item_name" style="visibility: hidden">{{ event.name }} Photo {{ photo.id }}</div>
+                      <span class="item_price"> ${{ event.price_in_dollars }} </span><br>
+                      <p><a href="javascript:;" class="btn btn-danger item_add">Add Photo to Cart <i class="icon-shopping-cart icon-white"></i></a></p>
+                    </div>                    
+                    </div>
+                  </div>
+                </li>
+
+                {% if forloop.counter|divisibleby:3 %} </ul><ul class="thumbnails">  {% endif %}
+            
+            {% endfor %}
+                
+                </ul>
+        
 
 {% endblock %}

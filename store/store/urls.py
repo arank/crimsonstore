@@ -20,5 +20,8 @@ urlpatterns = patterns('',
    (r'^$', direct_to_template, {'template': 'index.html'}),
    (r'^products/$', 'webstore.views.ProductsAll'),
    (r'^products/(?P<productslug>.*)/$', 'webstore.views.SpecificProduct'),
-   (r'^events/(?P<eventslug>.*)/$', 'webstore.views.SpecificEvent'),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
+   (r'^events/$', 'webstore.views.EventsAll'),
+   (r'^events/(?P<categoryslug>.*)/$', 'webstore.views.Category'),
+   (r'^singleevent/(?P<eventslug>.*)/$', 'webstore.views.SpecificEvent'),
+   (r'^cart/$', 'webstore.views.Cart'),
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

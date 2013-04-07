@@ -57,7 +57,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/home/arankhanna/websites/crimson/store/static'
+STATIC_ROOT = '/home/arankhanna/websites/crimson/store/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -65,7 +65,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-     "/home/arankhanna/websites/crimson/store/static"
+    # "/home/arankhanna/websites/crimson/store/static"
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

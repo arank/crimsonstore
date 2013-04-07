@@ -1,16 +1,70 @@
 {% extends "base.html" %}
 {% block content %}
-        <h1> Products </h1>
-        <div id="productlist">
-                {% for product in products %}
-               <p><a href="/products/{{ product.slug }}/"><img src="{{ product.photo.url }}"/>         {{ product }}</a></p>
-                {% endfor %}
-        </div>
+        <div class="container">
+          						<ul class="nav">
+                   <!--      <li><input type="text" /></li> -->
+            						<li ><a href="/">Home</a></li>
+                        <li class="active"><a href="#">Products</a></li>
+                        <li><a href="/events/">Photos</a></li>
+                        <li><a href="">Issues</a></li>
+                        </ul>
+        					</div>
+      				</div>
+    			</div>
+			</div>
+		  </div>
         
-        <h1> Event Photos </h1>
-        <div id="eventlist">
-                {% for event in events %}
-               <p><a href="/events/{{ event.slug }}/"> {{ event }}</a></p>
-                {% endfor %}
+        <div class="sectiontitle">
+        <div class="categorydropdown">
+          <div class="btn-group">
+            <button class="btn dropdown-toggle" data-toggle="dropdown">Pick a Category <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li><a href="#">Test</a></li>
+            </ul>
+          </div>
         </div>
+        <hr>
+      </div>
+
+
+                
+                 <div id='box'>
+                </div>
+
+            
+
+                <div id='screen'>
+                </div>
+                
+
+                <ul class="thumbnails">
+       
+                {% for product in products %}
+          
+                <li class="span3">
+                  <div class="thumbnail">
+                    <div class="simpleCart_shelfItem">
+                    <img data-src="holder.js/300x200" alt="#" src="{{ product.photo.url }}">
+                    <div class="caption">
+                      <h2 class="item_name">{{ product.name }}</h2>
+                      <p>{{ product.description }}</p>
+                      <span class="item_price"> ${{ product.price_in_dollars }} </span><br>
+                      <p><a href="javascript:;" class="btn btn-danger item_add">Add to Cart <i class="icon-shopping-cart icon-white"></i></a> <a href="#" class="btn" id="button">More Info</a></p>
+                    </div>                    
+                    </div>
+                  </div>
+                </li>
+
+                {% if forloop.counter|divisibleby:3 %} </ul><ul class="thumbnails">  {% endif %}
+            
+            {% endfor %}
+                
+                </ul>
+        
+        
+      
 {% endblock %}
+
+                
+                
+ 

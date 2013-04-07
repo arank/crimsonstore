@@ -52,7 +52,10 @@ class EventCategory(models.Model):
                              related_name='event_categories')
   name = models.CharField(max_length=300)
   slug = models.SlugField(max_length=150) 
-  description = models.TextField() 
+  description = models.TextField()
+  photo1 = models.ImageField(upload_to='product_photos/') 
+  photo2 = models.ImageField(upload_to='product_photos/')
+  photo3 = models.ImageField(upload_to='product_photos/')
   def __unicode__(self):
     return u'%s' % (self.name)
 
@@ -66,6 +69,9 @@ class Event(models.Model):
                            related_name='events')
   description = models.TextField()
   photographer = models.CharField(max_length=300)
+  photo1 = models.ImageField(upload_to='product_photos/') 
+  photo2 = models.ImageField(upload_to='product_photos/')
+  photo3 = models.ImageField(upload_to='product_photos/')
   def __unicode__(self):
     return u'%s' % (self.name)
 
@@ -74,7 +80,7 @@ class Photo(models.Model):
                            related_name='photos')
   photo = models.ImageField(upload_to='product_photos/')
 
-
+##########################
 
 def normalize_query(query_string,
                     findterms=re.compile(r'"([^"]+)"|(\S+)').findall,

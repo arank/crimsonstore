@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <div class="container">
+          						<ul class="nav">
+                   <!--      <li><input type="text" /></li> -->
+            	        <li><a href="/">Home</a></li>
+                        <li><a href="/products/">Products</a></li>
+                        <li><a href="/events/">Photos</a></li>
+                        <li><a href="">Issues</a></li>
+                        </ul>
+        					</div>
+      				</div>
+    			</div>
+			</div>
+		  </div>
+
+
+        <ul class="thumbnails">
+                        <li class="span9">
+                          <div class="thumbnail">
+                                <!-- show the cart -->
+                                <div class="simpleCart_items"></div>
+
+                                <!-- cart total (ex. $23.11)-->
+                                <p>Total:</p>
+                                <div class="simpleCart_total"></div>
+
+                                <!-- tax cost (ex. $1.38) -->
+                                <p>Tax:</p>
+                                <div class="simpleCart_tax"></div>
+
+                                <!-- shipping (ex. $5.00) -->
+                                <p>Shipping:</p>
+                                <div class="simpleCart_shipping"></div>
+
+                                <!-- grand total, including tax and shipping (ex. $28.49) -->
+
+                                <p>Total Owed:</p>
+                                <div class="simpleCart_grandTotal"></div>
+                                <a href="javascript:;" class="simpleCart_checkout">Checkout</a>
+                          </div>
+                        </li>
+                      </ul>
+
+        
+{% endblock %}
