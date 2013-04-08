@@ -17,7 +17,7 @@
         <link href="/media/css/bootstrap.css" rel="stylesheet"/> <!-- if folder /css folder is in the same spot as the html file-->
         <link href="/media/css/bootstrap-responsive.css" rel="stylesheet"/>
         <link href="/media/css/stylesheet.css" rel="stylesheet"/>
-
+        
                 <title>The Crimson Store</title>
         
         <script src="/media/js/simpleCart.js"></script>
@@ -56,7 +56,7 @@
 		    <div class="masthead">
 
           <div class="search">
-            <form action="" method="get">
+            <form action="/search/" method="get">
             <div class="input-prepend">
               <button type="submit"class="btn"><i class="icon-search"></i></button>
               <input name="query" placeholder="Search the Crimson Store" type="text" />
@@ -87,7 +87,7 @@
 
       <div id="bottom">
           <div class="footer crimson">
-              <a class="footer" href="www.thecrimson.com">about us</a> | 
+              <a class="footer" href="http://www.thecrimson.com">about us</a> | 
               <a class="footer" target="_blank" href="mailto:arankhanna@college.harvard.edu?subject=Crimson%20Online%20Store">contact us</a> <br/>
               Copyright &#169; 2013 by The Harvard Crimson
           </div>

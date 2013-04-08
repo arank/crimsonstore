@@ -79,6 +79,7 @@ class Photo(models.Model):
   event = models.ForeignKey('Event',
                            related_name='photos')
   photo = models.ImageField(upload_to='product_photos/')
+  
 
 ##########################
 

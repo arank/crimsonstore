@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-
+{% load watermark %}
 {% block content %}
         <div class="container">
           						<ul class="nav">
@@ -60,7 +60,8 @@
                 <li class="span3">
                   <div class="thumbnail">
                     <div class="simpleCart_shelfItem">
-                    <img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url }}">
+                    <!-- <img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}"> -->
+                    <a href="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}"><img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}"></a>
                     <div class="caption">
                       <div class="item_name" style="visibility: hidden">{{ event.name }} Photo {{ photo.id }}</div>
                       <span class="item_price"> ${{ event.price_in_dollars }} </span><br>

@@ -22,6 +22,7 @@ urlpatterns = patterns('',
    (r'^products/(?P<productslug>.*)/$', 'webstore.views.SpecificProduct'),
    (r'^events/$', 'webstore.views.EventsAll'),
    (r'^events/(?P<categoryslug>.*)/$', 'webstore.views.Category'),
-   (r'^events/singleevent/(?P<eventslug>.*)/$', 'webstore.views.SpecificEvent'),
+   (r'^singleevent/(?P<eventslug>.*)/$', 'webstore.views.SpecificEvent'),
    (r'^cart/$', 'webstore.views.Cart'),
+   (r'^search/(?P<query>.*)$', 'webstore.views.Search'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

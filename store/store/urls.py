@@ -24,4 +24,5 @@ urlpatterns = patterns('',
    (r'^events/(?P<categoryslug>.*)/$', 'webstore.views.Category'),
    (r'^singleevent/(?P<eventslug>.*)/$', 'webstore.views.SpecificEvent'),
    (r'^cart/$', 'webstore.views.Cart'),
+   (r'^search/$', 'webstore.views.Search'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

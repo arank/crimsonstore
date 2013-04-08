@@ -15,11 +15,21 @@
 			</div>
 		  </div>
 
+        
+        
+                                <div class="simpleCart_items">
+
+
+
+                                
+                                </div>
 
         <ul class="thumbnails">
                         <li class="span9">
                           <div class="thumbnail">
-              <span class="simpleCart_quantity"></span> items - <span class="simpleCart_total"></span>
+                                <!-- show the cart -->
+                                
+
 
                                 <!-- cart total (ex. $23.11)-->
                                 <p>Total:</p>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-
+{% load watermark %}
 {% block content %}
         <div class="container">
           						<ul class="nav">
@@ -43,7 +43,7 @@
                             <div class="caption" style="float:clear;">
                                     <h2 class="item_name">{{ event.name }}</h2>
                                     <p>{{ event.description }}</p>
-                                    <h6 class="item_price"> All Photos Package Price- ${{ event.price_in_dollars }} </h6><br>
+                                    <h5 class="item_price"> All Photos Package Price- ${{ event.price_in_dollars }} </h5><br>
                                     <p><a href="javascript:;" class="item_add btn btn-danger">Add Package to Cart <i class="icon-shopping-cart icon-white"></i></a>
                             </div>
                           </div>
@@ -60,7 +60,8 @@
                 <li class="span3">
                   <div class="thumbnail">
                     <div class="simpleCart_shelfItem">
-                    <img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url }}">
+                    <!-- <img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}"> -->
+                    <a href="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}" rel="lightbox[{{ event.name }}]"><img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}"></a>
                     <div class="caption">
                       <div class="item_name" style="visibility: hidden">{{ event.name }} Photo {{ photo.id }}</div>
                       <span class="item_price"> ${{ event.price_in_dollars }} </span><br>
