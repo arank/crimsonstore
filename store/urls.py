@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.views.generic.simple import direct_to_template
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -25,4 +26,7 @@ urlpatterns = patterns('',
    (r'^singleevent/(?P<eventslug>.*)/$', 'webstore.views.SpecificEvent'),
    (r'^cart/$', 'webstore.views.Cart'),
    (r'^search/$', 'webstore.views.Search'),
+
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+
+urlpatterns += staticfiles_urlpatterns()
