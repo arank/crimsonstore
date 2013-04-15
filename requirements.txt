@@ -1,0 +1,8 @@
+Django==1.4
+MySQL-python==1.2.4
+PIL==1.1.7
+dj-database-url==0.2.1
+gunicorn==0.17.2
+psycopg2==2.5
+watermarker==1.1
+wsgiref==0.1.2
