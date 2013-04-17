@@ -8,6 +8,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 admin.autodiscover()
 
+# admin and direct to template URLs
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'store.views.home', name='home'),
@@ -18,15 +19,19 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
    url(r'^admin/', include(admin.site.urls)),
-   (r'^$', direct_to_template, {'template': 'index.html'}),
-   (r'^products/$', 'webstore.views.ProductsAll'),
-   (r'^products/(?P<productslug>.*)/$', 'webstore.views.SpecificProduct'),
-   (r'^events/$', 'webstore.views.EventsAll'),
-   (r'^events/(?P<categoryslug>.*)/$', 'webstore.views.Category'),
-   (r'^singleevent/(?P<eventslug>.*)/$', 'webstore.views.SpecificEvent'),
-   (r'^cart/$', 'webstore.views.Cart'),
-   (r'^search/$', 'webstore.views.Search'),
+   (r'^$', direct_to_template, {'template': 'index.html'})
+)
 
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+# webstore.views URLs
+urlpatterns += patterns('webstore.views',
+   (r'^products/$', 'ProductsAll'),
+   (r'^products/(?P<productslug>.*)/$', 'SpecificProduct'),
+   (r'^events/$', 'EventsAll'),
+   (r'^events/(?P<categoryslug>.*)/$', 'Category'),
+   (r'^singleevent/(?P<eventslug>.*)/$', 'SpecificEvent'),
+   (r'^cart/$', 'Cart'),
+   (r'^search/$', 'Search')
+)
 
-urlpatterns += staticfiles_urlpatterns()
+# static media and file URLs
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + staticfiles_urlpatterns()
