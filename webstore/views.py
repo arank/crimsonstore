@@ -1,6 +1,9 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from webstore.models import *
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
+from django.core.urlresolvers import reverse
 
 # Create your views here.
 def ProductsAll(request):
@@ -86,3 +89,30 @@ def Search(request):
   return render_to_response('search_results.html',
                           { 'query': query_string, 'products': found_products, 'events': found_events }, context_instance=RequestContext(request))
 
+## PayPal ##
+#############################
+def Paypal(request):
+  base_url = 'http://thecrimson.com/crimsonstore/'
+  amount = request.POST['amount']
+  paypal_dict = {
+      "business": settings.PAYPAL_RECEIVER_EMAIL,
+      "amount": "1.00",
+      "item_name": "name of the item",
+      "invoice": "unique-invoice-id",
+      "notify_url": "%s%s" % (settings.SITE_NAME, reverse('paypal-ipn')),
+      "return_url": base_url + 'success',
+      "cancel_return": base_url + 'cancel'
+  }
+
+  # Create the instance.
+  form = PayPalPaymentsForm(initial=paypal_dict)
+  context = {"form": form.sandbox()}
+  return render_to_response("paypal.html", context)
+
+def show_me_the_money(sender, **kwargs):
+  ipn_obj = sender
+  # Undertake some action depending upon `ipn_obj`.
+  if ipn_obj.custom == "Upgrade all users!":
+      Users.objects.update(paid=True)
+  print __file__,1, 'This works'        
+payment_was_successful.connect(show_me_the_money)
