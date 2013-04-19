@@ -35,3 +35,6 @@ urlpatterns += patterns('webstore.views',
 
 # static media and file URLs
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + staticfiles_urlpatterns()
+
+# url for PayPal
+(r'^cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt', include('paypal.standard.ipn.urls'))
