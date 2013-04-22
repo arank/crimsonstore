@@ -1,3 +1,4 @@
 *.py[co]
 ._*
+.DS_Store
 local_settings.py
