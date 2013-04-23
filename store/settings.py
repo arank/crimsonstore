@@ -159,7 +159,7 @@ except ImportError:
 
 ADMIN_MEDIA_PREFIX = "/static/admin/"
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config(default='postgres://rgkgrkoxpjblfw:eEt6JGws-HaqBnqnZhHvxYKkqm@ec2-54-243-238-218.compute-1.amazonaws.com:5432/d181cv7s05fidj')
+DATABASES['default'] =  dj_database_url.config()
 
 
 # PayPal configuration
