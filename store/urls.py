@@ -30,7 +30,7 @@ urlpatterns += patterns('webstore.views',
    url(r'^events/(?P<categoryslug>.*)/$', 'Category'),
    url(r'^singleevent/(?P<eventslug>.*)/$', 'SpecificEvent'),
    url(r'^cart/$', 'Cart'),
-   url(r'^search/$', 'Search')
+   url(r'^search/$', 'Search'),
    url(r'^checkout/$', 'Paypal', name='paypal')
 )
 
