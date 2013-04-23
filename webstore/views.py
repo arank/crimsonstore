@@ -40,7 +40,8 @@ def SpecificEvent(request, eventslug):
 
 
 def Cart(request):
-  return render_to_response('cart.html', context_instance=RequestContext(request))
+  context = {'base_url' : 'http://crimsonstore.heroku.com/'}
+  return render_to_response('cart.html', context, context_instance=RequestContext(request))
 
 #########################
 
