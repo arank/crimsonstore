@@ -150,12 +150,11 @@ LOGGING = {
     }
 }
 
-'''
+
 try:
     from local_settings import *
 except ImportError:
     pass
-'''
 
 # comment out for local development
 
