@@ -117,9 +117,8 @@ def Paypal(request):
 
   # function to calculate shipping and tax. Returns (subtotal, tax, shipping)
   def subtotal_ship_tax(tax_rate = 0, ship_rate = 0, items = 0, price = 0):
-    (0,0,0)
-    #subtotal = items * price
-    #(subtotal, tax_rate * subtotal, ship_rate * items)
+    subtotal = items * price
+    return (subtotal, tax_rate * subtotal, ship_rate * items)
 
   # function to gracefully throw Wrong Order error
   def wrong_order(error, name, right_value, wrong_value):
