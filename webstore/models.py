@@ -1,4 +1,5 @@
 from django.db import models
+from paypal.standard.ipn.signals import payment_was_successful
 
 
 
@@ -79,4 +80,11 @@ class Photo(models.Model):
 
 ##########################
 
-
+## PayPal Model ##
+def show_me_the_money(sender, **kwargs):
+    ipn_obj = sender
+    # Undertake some action depending upon `ipn_obj`.
+    if ipn_obj.custom == "Upgrade all users!":
+        Users.objects.update(paid=True)
+    print __file__,1, 'This works'        
+payment_was_successful.connect(show_me_the_money)

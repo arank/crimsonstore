@@ -157,11 +157,12 @@ except ImportError:
     pass
 
 # comment out for local development
-
+'''
 ADMIN_MEDIA_PREFIX = "/static/admin/"
 import dj_database_url
 DATABASES['default'] =  dj_database_url.config()
-
+'''
 
 # PayPal configuration
 PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitaor@thecrimson.com'
+SITE_NAME = 'http://crimsonstore.heroku.com'
