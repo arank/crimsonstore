@@ -23,7 +23,31 @@
         <script src="/media/js/simpleCart.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
         <script src="/media/js/bootstrap.js"></script>
-        <script src='/media/js/custom.js'></script>
+        <script>
+          simpleCart({
+
+            cartColumns: [
+              { attr: "name", label: "Name"},
+              { view: "currency", attr: "price", label: "Price"},
+              { view: "decrement", label: false},
+              { attr: "quantity", label: "Qty"},
+              { view: "increment", label: false},
+              { view: "currency", attr: "total", label: "SubTotal" },
+              { view: "remove", text: "Remove", label: false}
+            ],
+
+              checkout: {
+                type: "SendForm",
+                
+                url: {{ base_url }} + 'checkout',
+
+                success: {{ base_url }} + 'success',
+
+                cancel: {{ base_url }} + 'cancel'
+               
+               }
+            });
+        </script>
     </head>
 
 

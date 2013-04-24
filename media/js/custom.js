@@ -21,7 +21,7 @@ simpleCart({
     checkout: {
       type: "SendForm",
       
-      url: base_url,
+      url: {{ base_url }},
 
       extra_data: {
         item_names : data
