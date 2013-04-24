@@ -161,7 +161,7 @@ def Paypal(request):
     total_tax += tax
     total_ship += shipping
 
-    item_count += 1
+    item_count -= 1
 
   # verifying totals
   if total_tax != request.GET['tax']:
