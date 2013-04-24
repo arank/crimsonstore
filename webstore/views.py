@@ -146,7 +146,7 @@ def Paypal(request):
 
     # item data from database
     db_item = Event.objects.get(name=item_name)
-    db_price = db_item.price_in_dollars
+    db_price = float(db_item.price_in_dollars)
 
     # verifying price
     if db_price != item_price:
