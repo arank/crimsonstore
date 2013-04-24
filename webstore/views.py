@@ -205,4 +205,4 @@ def Success(request):
   return render_to_response('success.html', context, context_instance=RequestContext(request))
 
 def Cancel(request):
-  return render_to_response('cancel.html'), context, context_instance=RequestContext(request))
+  return render_to_response('cancel.html', context, context_instance=RequestContext(request))
