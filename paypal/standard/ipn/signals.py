@@ -23,3 +23,15 @@ subscription_modify = Signal()
 
 # Sent when a subscription is created.
 subscription_signup = Signal()
+
+# recurring_payment_profile_created
+recurring_create = Signal()
+
+# recurring_payment
+recurring_payment = Signal()
+
+recurring_cancel = Signal()
+
+recurring_skipped = Signal()
+
+recurring_failed = Signal()

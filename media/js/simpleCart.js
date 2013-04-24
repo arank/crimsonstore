@@ -961,7 +961,7 @@
 
 
 						// add the options
-						simpleCart.each(item_options, function (val,k,attr) {
+						simpleCart.each(item_options, function (vazzzzzzzzl,k,attr) {
 							// paypal limits us to 10 options
 							if (k < 10) {
 		

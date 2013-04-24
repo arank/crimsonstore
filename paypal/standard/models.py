@@ -5,12 +5,31 @@ from django.conf import settings
 from paypal.standard.helpers import duplicate_txn_id, check_secret
 from paypal.standard.conf import RECEIVER_EMAIL, POSTBACK_ENDPOINT, SANDBOX_POSTBACK_ENDPOINT
 
+ST_PP_ACTIVE = 'Active'
+ST_PP_CANCELLED = 'Cancelled'
+ST_PP_CLEARED = 'Cleared'
+ST_PP_COMPLETED = 'Completed'
+ST_PP_DENIED = 'Denied'
+ST_PP_PAID = 'Paid'
+ST_PP_PENDING = 'Pending'
+ST_PP_PROCESSED = 'Processed'
+ST_PP_REFUSED = 'Refused'
+ST_PP_REVERSED = 'Reversed'
+ST_PP_REWARDED = 'Rewarded'
+ST_PP_UNCLAIMED = 'Unclaimed'
+ST_PP_UNCLEARED = 'Uncleared'
 
-class PayPalStandardBase(models.Model):
+try:
+    from idmapper.models import SharedMemoryModel as Model
+except ImportError:
+    Model = models.Model
+
+class PayPalStandardBase(Model):
     """Meta class for common variables shared by IPN and PDT: http://tinyurl.com/cuq6sj"""
     # @@@ Might want to add all these one distant day.
     # FLAG_CODE_CHOICES = (
     # PAYMENT_STATUS_CHOICES = "Canceled_ Reversal Completed Denied Expired Failed Pending Processed Refunded Reversed Voided".split()
+    PAYMENT_STATUS_CHOICES = (ST_PP_ACTIVE, ST_PP_CANCELLED, ST_PP_CLEARED, ST_PP_COMPLETED, ST_PP_DENIED, ST_PP_PAID, ST_PP_PENDING, ST_PP_PROCESSED, ST_PP_REFUSED, ST_PP_REVERSED, ST_PP_REWARDED, ST_PP_UNCLAIMED, ST_PP_UNCLEARED)
     # AUTH_STATUS_CHOICES = "Completed Pending Voided".split()
     # ADDRESS_STATUS_CHOICES = "confirmed unconfirmed".split()
     # PAYER_STATUS_CHOICES = "verified / unverified".split()
@@ -29,7 +48,7 @@ class PayPalStandardBase(models.Model):
     receiver_id = models.CharField(max_length=127, blank=True)  # 258DLEHY2BDK6
     residence_country = models.CharField(max_length=2, blank=True)
     test_ipn = models.BooleanField(default=False, blank=True)
-    txn_id = models.CharField("Transaction ID", max_length=19, blank=True, help_text="PayPal transaction ID.")
+    txn_id = models.CharField("Transaction ID", max_length=19, blank=True, help_text="PayPal transaction ID.", db_index=True)
     txn_type = models.CharField("Transaction Type", max_length=128, blank=True, help_text="PayPal transaction type.")
     verify_sign = models.CharField(max_length=255, blank=True)    
     
@@ -161,7 +180,10 @@ class PayPalStandardBase(models.Model):
     response = models.TextField(blank=True)  # What we got back.
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
+    # Where did it come from?
+    from_view = models.CharField(max_length=6, null=True, blank=True)
+
     class Meta:
         abstract = True
 
@@ -188,6 +210,21 @@ class PayPalStandardBase(models.Model):
     
     def is_subscription_signup(self):
         return self.txn_type == "subscr_signup"
+
+    def is_recurring_create(self):
+        return self.txn_type == "recurring_payment_profile_created"
+
+    def is_recurring_payment(self):
+        return self.txn_type == "recurring_payment"
+    
+    def is_recurring_cancel(self):
+        return self.txn_type == "recurring_payment_profile_cancel"
+    
+    def is_recurring_skipped(self):
+        return self.txn_type == "recurring_payment_skipped"
+    
+    def is_recurring_failed(self):
+        return self.txn_type == "recurring_payment_failed"
     
     def set_flag(self, info, code=None):
         """Sets a flag on the transaction and also sets a reason."""
@@ -211,7 +248,7 @@ class PayPalStandardBase(models.Model):
         self._verify_postback()  
         if not self.flag:
             if self.is_transaction():
-                if self.payment_status != "Completed":
+                if self.payment_status not in self.PAYMENT_STATUS_CHOICES:
                     self.set_flag("Invalid payment_status. (%s)" % self.payment_status)
                 if duplicate_txn_id(self):
                     self.set_flag("Duplicate txn_id. (%s)" % self.txn_id)
@@ -242,15 +279,36 @@ class PayPalStandardBase(models.Model):
         else:
             return POSTBACK_ENDPOINT
 
+    def send_signals(self):
+        """Shout for the world to hear whether a txn was successful."""
+
+        # Don't do anything if we're not notifying!
+        if self.from_view != 'notify':
+            return
+
+        # Transaction signals:
+        if self.is_transaction():
+            if self.flag:
+                payment_was_flagged.send(sender=self)
+            else:
+                payment_was_successful.send(sender=self)
+        # Subscription signals:
+        else:
+            if self.is_subscription_cancellation():
+                subscription_cancel.send(sender=self)
+            elif self.is_subscription_signup():
+                subscription_signup.send(sender=self)
+            elif self.is_subscription_end_of_term():
+                subscription_eot.send(sender=self)
+            elif self.is_subscription_modified():
+                subscription_modify.send(sender=self) 
+
+
     def initialize(self, request):
         """Store the data we'll need to make the postback from the request object."""
         self.query = getattr(request, request.method).urlencode()
         self.ipaddress = request.META.get('REMOTE_ADDR', '')
 
-    def send_signals(self):
-        """After a transaction is completed use this to send success/fail signals"""
-        raise NotImplementedError
-        
     def _postback(self):
         """Perform postback to PayPal and store the response in self.response."""
         raise NotImplementedError

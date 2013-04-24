@@ -143,7 +143,7 @@ def Paypal(request):
     item_quantity = request.POST['item_quantity_' + item_count]
 
     # item data from database
-    db_item = Product.objects.get(name=item_name)
+    db_item = Event.objects.get(name=item_name)
     db_price = db_item.price_in_dollars
 
     # verifying price
@@ -171,11 +171,17 @@ def Paypal(request):
       wrong_order('currency', 'currency', 'USD', request.POST['currency'])
 
   total = total_ship + total_tax + total_price
+
+  import random
+
+  invoice_id = random.randint(0,settings.MAX_INVOICE)
+  invoice_id += time.clock()
+
   paypal_dict = {
       "business": settings.PAYPAL_RECEIVER_EMAIL,
       "amount": total,
-      "item_name": "name of the item",
-      "invoice": "unique-invoice-id",
+      "item_name": "Crimson Store Purchase",
+      "invoice": invoice_id,
       "notify_url": "%s%s" % (settings.SITE_NAME, reverse('paypal-ipn')),
       "return_url": base_url + 'success',
       "cancel_return": base_url + 'cancel',
