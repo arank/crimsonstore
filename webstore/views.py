@@ -93,8 +93,10 @@ def Search(request):
 ## PayPal ##
 #############################
 def Paypal(request):
-  base_url = 'http://thecrimson.com/crimsonstore/'
-  amount = request.POST['amount']
+  base_url = 'http://crimsonstore.heroku.com/checkout/'
+  
+  counter = 1
+
   paypal_dict = {
       "business": settings.PAYPAL_RECEIVER_EMAIL,
       "amount": "1.00",
