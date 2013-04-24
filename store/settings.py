@@ -162,3 +162,4 @@ except ImportError:
 
 # PayPal configuration
 PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitaor@thecrimson.com'
+SITE_NAME = 'http://crimsonstore.heroku.com'
