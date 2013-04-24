@@ -137,6 +137,8 @@ def Paypal(request):
   # Verify each item (price, shipping, tax)
   while item_count > 0 :
 
+    string = str(item_count)
+
     # item data from request
     item_name = request.GET['item_name_' + item_count]
     item_price = request.GET['item_price_' + item_count]
@@ -158,6 +160,8 @@ def Paypal(request):
     total_price += subtotal
     total_tax += tax
     total_ship += shipping
+
+    item_count += 1
 
   # verifying totals
   if total_tax != request.GET['tax']:
