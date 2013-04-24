@@ -43,7 +43,7 @@ class ProductCategory(models.Model):
                                self.name)
     return u'%s: %s' % (self.catalog.name, self.name)
 
-
+# Corresponds to Category on SmugMug
 class EventCategory(models.Model):
   catalog = models.ForeignKey('Catalog',
                              related_name='event_categories')
@@ -56,6 +56,7 @@ class EventCategory(models.Model):
   def __unicode__(self):
     return u'%s' % (self.name)
 
+# Corresponds to Album on SmugMug
 class Event(models.Model):
   name = models.CharField(max_length=300)
   slug = models.SlugField(max_length=150)
@@ -72,11 +73,17 @@ class Event(models.Model):
   def __unicode__(self):
     return u'%s' % (self.name)
 
+# Corresponds to Images from 
 class Photo(models.Model):
   event = models.ForeignKey('Event',
                            related_name='photos')
-  photo = models.ImageField(upload_to='product_photos/')
-  
+  lightboxURL = models.URLField()
+  mediumURL   = models.URLField()
+  originalURL = models.URLField()
+  smallURL    = models.URLField()
+  thumbURL    = models.URLField()
+  tinyURL     = models.URLField()
+  url         = models.URLField()  
 
 ##########################
 
