@@ -150,18 +150,15 @@ LOGGING = {
     }
 }
 
+# comment out for local development
+ADMIN_MEDIA_PREFIX = "/static/admin/"
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
 
 try:
     from local_settings import *
 except ImportError:
     pass
-
-# comment out for local development
-
-ADMIN_MEDIA_PREFIX = "/static/admin/"
-import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
-
 
 # PayPal configuration
 PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitaor@thecrimson.com'
