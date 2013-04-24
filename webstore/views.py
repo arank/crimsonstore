@@ -141,8 +141,8 @@ def Paypal(request):
 
     # item data from request
     item_name = request.GET['item_name_' + string]
-    item_price = request.GET['item_price_' + string]
-    item_quantity = request.GET['item_quantity_' + string]
+    item_price = float(request.GET['item_price_' + string])
+    item_quantity = int(request.GET['item_quantity_' + string])
 
     # item data from database
     db_item = Event.objects.get(name=item_name)
@@ -153,7 +153,7 @@ def Paypal(request):
         wrong_order('price', item_name, db_price, item_price)
 
     # tax data
-    tax_rate = request.GET['taxRate']
+    tax_rate = float(request.GET['taxRate'])
 
     # summing it up
     (subtotal, tax, shipping) = subtotal_ship_tax(tax_rate, 0, item_quantity, db_price)
