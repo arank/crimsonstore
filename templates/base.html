@@ -37,9 +37,11 @@
             ],
 
               checkout: {
-                type: "SendForm",
+                type: "PayPal",
 
-                method: "GET",
+                email: 'businessmanager-facilitaor@thecrimson.com'
+
+                sandbox: 'true',
                 
                 url: '{{ base_url }}',
 
@@ -51,6 +53,8 @@
             });
         </script>
     </head>
+
+
 
     <body>
 

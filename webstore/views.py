@@ -199,4 +199,4 @@ def Paypal(request):
   # change to form.render() when live. form.sandbox() when testing
   context = {"form": form.render()}
 
-  return render_to_response("paypal.html", context, context_instance=RequestContext(request))
+  return render_to_response("paypal.html", context)
