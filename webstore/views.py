@@ -140,9 +140,9 @@ def Paypal(request):
     string = str(item_count)
 
     # item data from request
-    item_name = request.GET['item_name_' + item_count]
-    item_price = request.GET['item_price_' + item_count]
-    item_quantity = request.GET['item_quantity_' + item_count]
+    item_name = request.GET['item_name_' + string]
+    item_price = request.GET['item_price_' + string]
+    item_quantity = request.GET['item_quantity_' + string]
 
     # item data from database
     db_item = Event.objects.get(name=item_name)
