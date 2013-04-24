@@ -1,4 +1,4 @@
-$(documented).ready(
+$(document).ready(
 
   var names = '';
   var base_url = {{ base_url }} + 'checkout';
