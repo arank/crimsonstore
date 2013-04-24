@@ -112,7 +112,7 @@ def Search(request):
   '''
 def Paypal(request):
 
-  if request.method == 'GET':
+  if request.method == 'POST':
       return redirect('/')
 
   # function to calculate shipping and tax. Returns (subtotal, tax, shipping)
@@ -127,7 +127,7 @@ def Paypal(request):
 
   # static vars
   base_url = 'http://crimsonstore.heroku.com/checkout/'
-  item_count = int(request.POST['itemCount'])
+  item_count = int(request.GET['itemCount'])
   
   # keep track of total price
   total_price = 0
@@ -138,9 +138,9 @@ def Paypal(request):
   while item_count > 0 :
 
     # item data from request
-    item_name = request.POST['item_name_' + item_count]
-    item_price = request.POST['item_price_' + item_count]
-    item_quantity = request.POST['item_quantity_' + item_count]
+    item_name = request.GET['item_name_' + item_count]
+    item_price = request.GET['item_price_' + item_count]
+    item_quantity = request.GET['item_quantity_' + item_count]
 
     # item data from database
     db_item = Event.objects.get(name=item_name)
@@ -151,7 +151,7 @@ def Paypal(request):
         wrong_order('price', item_name, db_price, item_price)
 
     # tax data
-    tax_rate = request.POST['taxRate']
+    tax_rate = request.GET['taxRate']
 
     # summing it up
     (subtotal, tax, shipping) = subtotal_ship_tax(tax_rate, 0, item_quantity, db_price)
@@ -160,19 +160,20 @@ def Paypal(request):
     total_ship += shipping
 
   # verifying totals
-  if total_tax != request.POST['tax']:
-    wrong_order('tax', 'order', total_tax, request.POST['tax'])
+  if total_tax != request.GET['tax']:
+    wrong_order('tax', 'order', total_tax, request.GET['tax'])
 
-  if total_ship != request.POST['shipping']:
-    wrong_order('shipping', 'order', total_ship, request.POST['shipping'])
+  if total_ship != request.GET['shipping']:
+    wrong_order('shipping', 'order', total_ship, request.GET['shipping'])
 
   # verifying payment is in US dollars
-  if request.POST['currency'] != 'USD':
-      wrong_order('currency', 'currency', 'USD', request.POST['currency'])
+  if request.GET['currency'] != 'USD':
+      wrong_order('currency', 'currency', 'USD', request.GET['currency'])
 
   total = total_ship + total_tax + total_price
 
   import random
+  import time
 
   invoice_id = random.randint(0,settings.MAX_INVOICE)
   invoice_id += time.clock()
@@ -182,7 +183,7 @@ def Paypal(request):
       "amount": total,
       "item_name": "Crimson Store Purchase",
       "invoice": invoice_id,
-      "notify_url": "%s%s" % (settings.SITE_NAME, reverse('paypal-ipn')),
+      "notify_url": "http://crimsonstore.heroku.com/cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt",
       "return_url": base_url + 'success',
       "cancel_return": base_url + 'cancel',
       "custom": True
@@ -193,4 +194,5 @@ def Paypal(request):
 
   # change to form.render() when live. form.sandbox() when testing
   context = {"form": form.sandbox()}
-  return render_to_response("paypal.html", context)
+
+  return render_to_response("paypal.html", context, context_instance=RequestContext(request))
