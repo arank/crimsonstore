@@ -43,6 +43,7 @@
                             <div class="caption" style="float:clear;">
                                     <h2 class="item_name">{{ event.name }}</h2>
                                     <p>{{ event.description }}</p>
+                                    <span style='display:none;' class='item_id'>{{ event.id }}</span>
                                     <h5 class="item_price"> All Photos Package Price- ${{ event.price_in_dollars }} </h5><br>
                                     <p><a href="javascript:;" class="item_add btn btn-danger">Add Package to Cart <i class="icon-shopping-cart icon-white"></i></a>
                             </div>
@@ -65,6 +66,7 @@
                     <div class="caption">
                       <div class="item_name" style="visibility: hidden">{{ event.name }} Photo {{ photo.id }}</div>
                       <span class="item_price"> ${{ event.price_in_dollars }} </span><br>
+                      <span style='display:none;' class='item_id'>{{ event.id }}</span>
                       <p><a href="javascript:;" class="btn btn-danger item_add">Add Photo to Cart <i class="icon-shopping-cart icon-white"></i></a></p>
                     </div>                    
                     </div>

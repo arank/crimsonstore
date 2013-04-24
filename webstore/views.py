@@ -110,15 +110,10 @@ def Search(request):
   return=http%3A%2F%2Fcrimsonstore.heroku.com%2Fsuccess
   cancel_return=http%3A%2F%2Fcrimsonstore.heroku.com%2Fcancel
   '''
-def Paypal(request):
+def Success(request):
 
-  if request.method == 'POST':
+  if request.method == 'GET':
       return redirect('/')
-
-  # function to calculate shipping and tax. Returns (subtotal, tax, shipping)
-  def subtotal_ship_tax(tax_rate = 0, ship_rate = 0, items = 0, price = 0):
-    subtotal = items * price
-    return (subtotal, tax_rate * subtotal, ship_rate * items)
 
   # function to gracefully throw Wrong Order error
   def wrong_order(error, name, right_value, wrong_value):
@@ -126,13 +121,16 @@ def Paypal(request):
     return render_to_response('wrong_order.html', context, context_instance=RequestContext(request))
 
   # static vars
-  base_url = 'http://crimsonstore.heroku.com/checkout/'
-  item_count = int(request.GET['itemCount'])
+  base_url = 'http://crimsonstore.heroku.com/checkout'
+  item_count = int(request.POST['num_cart_items'])
+  tax = float(request.POST['tax'])
+  ship_handle = float(request.POST['mc_shipping']) + float(request.POST['mc_handling'])
+  total = float(request.POST['mc_gross']) - float(request.POST['mc_fee'])
   
   # keep track of total price
-  total_price = 0
-  total_tax = 0
-  total_ship = 0
+  db_total = 0
+  db_tax = 0
+  db_ship = 0
 
   # Verify each item (price, shipping, tax)
   while item_count > 0 :
@@ -140,12 +138,12 @@ def Paypal(request):
     string = str(item_count)
 
     # item data from request
-    item_name = request.GET['item_name_' + string]
-    item_price = float(request.GET['item_price_' + string])
-    item_quantity = int(request.GET['item_quantity_' + string])
+    item_name = request.POST['item_name_' + string]
+    item_price = float(request.POST['item_price_' + string])
+    item_quantity = int(request.POST['item_quantity_' + string])
 
     # item data from database
-    db_item = Event.objects.get(name=item_name)
+    db_item = Event.objects.POST(name=item_name)
     db_price = float(db_item.price_in_dollars)
 
     # verifying price
@@ -153,7 +151,7 @@ def Paypal(request):
         wrong_order('price', item_name, db_price, item_price)
 
     # tax data
-    tax_rate = float(request.GET['taxRate'])
+    tax_rate = float(request.POST['taxRate'])
 
     # summing it up
     (subtotal, tax, shipping) = subtotal_ship_tax(tax_rate, 0, item_quantity, db_price)
@@ -164,15 +162,15 @@ def Paypal(request):
     item_count -= 1
 
   # verifying totals
-  if total_tax != request.GET['tax']:
-    wrong_order('tax', 'order', total_tax, request.GET['tax'])
+  if total_tax != request.POST['tax']:
+    wrong_order('tax', 'order', total_tax, request.POST['tax'])
 
-  if total_ship != request.GET['shipping']:
-    wrong_order('shipping', 'order', total_ship, request.GET['shipping'])
+  if total_ship != request.POST['shipping']:
+    wrong_order('shipping', 'order', total_ship, request.POST['shipping'])
 
   # verifying payment is in US dollars
-  if request.GET['currency'] != 'USD':
-      wrong_order('currency', 'currency', 'USD', request.GET['currency'])
+  if request.POST['currency'] != 'USD':
+      wrong_order('currency', 'currency', 'USD', request.POST['currency'])
 
   total = total_ship + total_tax + total_price
 
@@ -200,9 +198,6 @@ def Paypal(request):
   context = {"form": form.render()}
 
   return render_to_response("paypal.html", context)
-
-def Success(request):
-  return render_to_response('success.html', context, context_instance=RequestContext(request))
 
 def Cancel(request):
   return render_to_response('cancel.html', context, context_instance=RequestContext(request))

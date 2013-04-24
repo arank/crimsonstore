@@ -48,6 +48,7 @@
                             <div class="caption" style="float:clear;">
                                     <h2 class="item_name">{{ event.name }}</h2>
                                     <p>{{ event.description }}</p>
+                                    <span style='display:none;' class='item_id'>{{ event.id }}</span>
                                     <span class="item_price"> All Photos Package Price- ${{ event.price_in_dollars }} </span><br>
                                     <p><a href="javascript:;" class="item_add btn btn-danger">Add Package to Cart <i class="icon-shopping-cart icon-white"></i></a> <a href="/singleevent/{{ event.slug }}"     class="btn">View Gallery</a></p>
                             </div>
