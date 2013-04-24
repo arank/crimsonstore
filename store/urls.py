@@ -31,7 +31,9 @@ urlpatterns += patterns('webstore.views',
    url(r'^singleevent/(?P<eventslug>.*)/$', 'SpecificEvent'),
    url(r'^cart/$', 'Cart'),
    url(r'^search/$', 'Search'),
-   url(r'^checkout/$', 'Paypal', name='paypal')
+   url(r'^checkout/$', 'Paypal', name='paypal'),
+   url(r'^checkout/success/$', 'Success', name='success'),
+   url(r'^checkout/cancel/$', 'Cancel', name='cancel'),
 )
 
 # static media and file URLs
