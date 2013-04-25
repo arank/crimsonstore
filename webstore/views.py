@@ -5,7 +5,13 @@ from django.core.urlresolvers import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.template import RequestContext
 from webstore.models import *
+from webstore.paypal import Endpoint
+from webstore.paypal import verify_data as get_context
 from paypal.standard.forms import PayPalPaymentsForm
+
+
+# Paypal IPN verification classes
+
 
 # Create your views here.
 def ProductsAll(request):
@@ -100,124 +106,25 @@ def Search(request):
 ## We are using SimpleCartJS. This is the sample data fed to this view.
 @csrf_exempt
 def Success(request):
-
-  # function to gracefully throw Wrong Order error
-  def wrong_order(error, name, right_value, wrong_value):
-    context = {'error':error,'item_name':name,'right_value':right_value,'wrong_value':wrong_value}
-    return render_to_response('wrong_order.html', context, context_instance=RequestContext(request))
-
-  # function to verify overall request
-  def verify(request, name):
-    # payer verification
-    payment_status = request.POST.get('payment_status', '')
-    if payment_status != 'Completed':
-      wrong_order('uncompleted', name, 'Completed', payment_status)
-
-    payer_status = request.POST.get('payer_status', '')
-    if payer_status != 'verified':
-      wrong_order('unverified', name, 'verified', payer_status)
-
-  # function to verify item (subtotal, tax, and shipping)
-  def subtotal_ship_tax(tax_rate, shipping_rate, price, quantity):
-    subtotal = price * quantity
-    tax = tax_rate * subtotal
-    shipping = shipping_rate * subtotal
-    return (subtotal, tax, shipping)
-    
-  if request.method == 'GET':
+  if request.method == 'POST':
+    data = dict(request.POST.items())
+  else
     return redirect('/')
 
-  # customer name
-  first_name = request.POST.get('first_name', '')
-  last_name = request.POST.get('last_name', '')
-  name = first_name + last_name
-
-  verify(request, name)
-
-  # item verification
-  item_count = int(request.POST.get('num_cart_items', '0'))
-  if item_count == 0:
-    wrong_order('zero_items', name, 1, item_count)
-
-  form_total = float(request.POST['mc_gross']) - float(request.POST['mc_fee'])
-  if form_total == 0.0:
-    wrong_order('zero_payment', name, 1., total)
-
-  # other data
-  tax = float(request.POST.get('tax','0.0'))
-  ship_handle = float(request.POST.get('mc_shipping','0.0')) + float(request.POST['mc_handling']) 
-
-  # keep track of total price, tax, and ship
-  total_price = 0
-  total_tax = 0
-  total_ship = 0
-
-  photo_urls = {}
-
-  # Verify each item (price, shipping, tax)
-  for x in range(1, item_count + 1) :
-
-    xstring = str(x)
-
-    # item data from request
-    item_name = request.POST['item_name' + xstring]
-    item_quantity = int(request.POST['quantity' + xstring])
-    item_price = float(request.POST['mc_gross_' + xstring])
-    item_shipping = float(request.POST['mc_shipping' + xstring]) + float(request.POST['mc_shipping' + xstring])
-    item_tax = float(request.POST['tax' + xstring])
-
-    # item data from database (replace this with ID soon)
-    db_item = Event.objects.get(name=item_name)
-    db_price = float(db_item.price_in_dollars)
-
-    # summing it up
-    (subtotal, tax, shipping) = subtotal_ship_tax(0.0, 0.0, item_quantity, db_price)
-
-    if subtotal != item_price:
-      wrong_order('price', item_name, subtotal, item_price)
-
-    if tax != item_tax:
-      wrong_order('tax', item_name, tax, item_tax)
-
-    if shipping != item_shipping:
-      wrong_order('shipping', item_name, shipping, item_shipping)
-
-    total_price += subtotal
-    total_tax += tax
-    total_ship += shipping
-
-    photos = [db_item.photo1, db_item.photo2, db_item.photo3]
-    photo_urls[item_name] = photos
-
-  # verifying totals
-  form_tax = float(request.POST['tax'])
-  form_shipping = float(request.POST['mc_handling']) + float(request.POST['mc_shipping'])
-  form_currency = request.POST['mc_currency']
-  if total_tax != form_tax :
-    wrong_order('tax', name, total_tax, form_tax)
-
-  if total_ship != form_shipping:
-    wrong_order('shipping', 'name', total_ship, form_shipping)
-
-  # verifying payment is in US dollars
-  if form_currency != 'USD':
-      wrong_order('currency', name, 'USD', form_currency)
-
-  total = total_ship + total_tax + total_price
-
-  if total != form_total:
-    wrong_order('total', name, total, form_total)
-
-  # send email
-  email = request.POST['payer_email']
-
-  context = {
-      "business": settings.PAYPAL_RECEIVER_EMAIL,
-      "amount": total,
-      "name": name,
-      "email": email }
-
+  # Takes care of verifying data and emailing
+  context = get_context(data)
   return render_to_response("success.html", context, context_instance=RequestContext(request))
 
 def Cancel(request):
-  return render_to_response('cancel.html', context, context_instance=RequestContext(request))
+  return render_to_response('cancel.html', context_instance=RequestContext(request))
+
+# IPN implementation
+@csrf_exempt
+class PayPalIPN(Endpoint):
+  def process(self, data):
+    context = get_context(data)
+    return render_to_response("success.html", context, context_instance=RequestContext(request))
+      
+  def process_invalid(self, data):
+    # should probably log this somewhere
+    return render_to_response('cancel.html', context_instance=RequestContext(request))
