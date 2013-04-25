@@ -187,7 +187,7 @@ def Success(request):
     total_ship += shipping
 
     photos = [db_item.photo1, db_item.photo2, db_item.photo3]
-    photo_urls.update(item_name,photos)
+    photo_urls[item_name] = photos
 
   # verifying totals
   form_tax = float(request.POST['tax'])
