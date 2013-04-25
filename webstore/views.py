@@ -203,7 +203,7 @@ def Success(request):
   if form_currency != 'USD':
       wrong_order('currency', name, 'USD', form_currency)
 
-  total = db_ship + db_tax + db_price
+  total = total_ship + total_tax + total_price
 
   if total != form_total:
     wrong_order('total', name, total, form_total)
