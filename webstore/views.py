@@ -122,7 +122,7 @@ def Success(request):
     subtotal = price * quantity
     tax = tax_rate * subtotal
     shipping = shipping_rate * subtotal
-    return (sutotal, tax, shipping)
+    return (subtotal, tax, shipping)
     
   if request.method == 'GET':
     return redirect('/')
