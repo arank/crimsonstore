@@ -152,6 +152,8 @@ def Success(request):
   db_tax = 0
   db_ship = 0
 
+  photo_urls = {}
+
   # Verify each item (price, shipping, tax)
   for x in range(1, item_count + 1) :
 
@@ -183,6 +185,9 @@ def Success(request):
     total_price += subtotal
     total_tax += tax
     total_ship += shipping
+
+    photos = [db_item.photo1, db_item.photo2, db_item.photo3]
+    photo_urls.update(item_name,photos)
 
   # verifying totals
   form_tax = float(request.POST['tax'])
