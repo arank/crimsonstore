@@ -148,9 +148,9 @@ def Success(request):
   ship_handle = float(request.POST.get('mc_shipping','0.0')) + float(request.POST['mc_handling']) 
 
   # keep track of total price, tax, and ship
-  db_total = 0
-  db_tax = 0
-  db_ship = 0
+  total_price = 0
+  total_tax = 0
+  total_ship = 0
 
   photo_urls = {}
 
