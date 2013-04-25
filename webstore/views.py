@@ -201,10 +201,14 @@ def Success(request):
   if total != form_total:
     wrong_order('total', name, total, form_total)
 
+ # send email
+ email = request.POST['payer_email']
+
   context = {
       "business": settings.PAYPAL_RECEIVER_EMAIL,
       "amount": total,
       "name": name
+      'email': email
     }
 
   return render_to_response("success.html", context, context_instance=RequestContext(request))
