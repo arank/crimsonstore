@@ -41,7 +41,7 @@ def SpecificEvent(request, eventslug):
 
 
 def Cart(request):
-  base_url = request.build_absolute_uri('/checkout/')
+  base_url = request.build_absolute_uri('/checkout')
   context = {'base_url' : base_url}
   return render_to_response('cart.html', context, context_instance=RequestContext(request))
 
@@ -97,107 +97,117 @@ def Search(request):
 
 ## PayPal #*
 ## We are using SimpleCartJS. This is the sample data fed to this view.
-  ''' 
-  currency=USD
-  shipping=0
-  tax=0
-  taxRate=0
-  itemCount=1
-  item_name_1=Crew
-  item_quantity_1=11
-  item_price_1=200
-  item_options_1=
-  return=http%3A%2F%2Fcrimsonstore.heroku.com%2Fsuccess
-  cancel_return=http%3A%2F%2Fcrimsonstore.heroku.com%2Fcancel
-  '''
 def Success(request):
-
-  if request.method == 'GET':
-      return redirect('/')
 
   # function to gracefully throw Wrong Order error
   def wrong_order(error, name, right_value, wrong_value):
     context = {'error':error,'item_name':name,'right_value':right_value,'wrong_value':wrong_value}
     return render_to_response('wrong_order.html', context, context_instance=RequestContext(request))
 
-  # static vars
-  base_url = 'http://crimsonstore.heroku.com/checkout'
-  item_count = int(request.POST['num_cart_items'])
-  tax = float(request.POST['tax'])
-  ship_handle = float(request.POST['mc_shipping']) + float(request.POST['mc_handling'])
-  total = float(request.POST['mc_gross']) - float(request.POST['mc_fee'])
-  
-  # keep track of total price
+  # function to verify overall request
+  def verify(request, name):
+    # payer verification
+    payment_status = request.POST.get('payment_status', '')
+    if payment_status != 'Completed':
+      wrong_order('uncompleted', name, 'Completed', payment_status)
+
+    payer_status = request.POST.get('payer_status', '')
+    if payer_status != 'verified':
+      wrong_order('unverified', name, 'verified', payer_status)
+
+  # function to verify item (subtotal, tax, and shipping)
+  def subtotal_ship_tax(tax_rate, shipping_rate, price, quantity):
+    sutotal = price * quantity
+    tax = tax_rate * subtotal
+    shipping = shipping_rate * subtotal
+    return (sutotal, tax, shipping)
+    
+  if request.method == 'GET':
+    return redirect('/')
+
+  # customer name
+  first_name = request.POST.get('first_name', '')
+  last_name = request.POST.get('last_name', '')
+  name = first_name + last_name
+
+  verify(request, name)
+
+  # item verification
+  item_count = int(request.POST.get('num_cart_items', '0'))
+  if item_count == 0:
+    wrong_order('zero_items', name, 1, item_count)
+
+  form_total = float(request.POST['mc_gross']) - float(request.POST['mc_fee'])
+  if form_total == 0.0:
+    wrong_order('zero_payment', name, 1., total)
+
+  # other data
+  tax = float(request.POST.get('tax','0.0'))
+  ship_handle = float(request.POST.get('mc_shipping','0.0')) + float(request.POST['mc_handling']) 
+
+  # keep track of total price, tax, and ship
   db_total = 0
   db_tax = 0
   db_ship = 0
 
   # Verify each item (price, shipping, tax)
-  while item_count > 0 :
+  for x in item_range(1, item_count + 1) :
 
-    string = str(item_count)
+    xstring = str(x)
 
     # item data from request
-    item_name = request.POST['item_name_' + string]
-    item_price = float(request.POST['item_price_' + string])
-    item_quantity = int(request.POST['item_quantity_' + string])
+    item_name = request.POST['item_name' + xstring]
+    item_quantity = int(request.POST['quantity' + xstring])
+    item_price = float(request.POST['mc_gross_' + xstring])
+    item_shipping = float(request.POST['mc_shipping' + xstring]) + float(request.POST['mc_shipping' + xstring])
+    item_tax = float(request.POST['tax' + xstring])
 
-    # item data from database
-    db_item = Event.objects.POST(name=item_name)
+    # item data from database (replace this with ID soon)
+    db_item = Event.objects.get(name=item_name)
     db_price = float(db_item.price_in_dollars)
 
-    # verifying price
-    if db_price != item_price:
-        wrong_order('price', item_name, db_price, item_price)
-
-    # tax data
-    tax_rate = float(request.POST['taxRate'])
-
     # summing it up
-    (subtotal, tax, shipping) = subtotal_ship_tax(tax_rate, 0, item_quantity, db_price)
+    (subtotal, tax, shipping) = subtotal_ship_tax(0.0, 0.0, item_quantity, db_price)
+
+    if subtotal != item_price:
+      wrong_order('price', item_name, subtotal, item_price)
+
+    if tax != item_tax:
+      wrong_order('tax', item_name, tax, item_tax)
+
+    if shipping != item_shipping:
+      wrong_order('shipping', item_name, shipping, item_shipping)
+
     total_price += subtotal
     total_tax += tax
     total_ship += shipping
 
-    item_count -= 1
-
   # verifying totals
-  if total_tax != request.POST['tax']:
-    wrong_order('tax', 'order', total_tax, request.POST['tax'])
+  form_tax = float(request.POST['tax'])
+  form_shipping = float(request.POST['mc_handling']) + float(request.POST['mc_shipping'])
+  form_currency = request.POST['mc_currency']
+  if total_tax != form_tax :
+    wrong_order('tax', name, total_tax, form_tax)
 
-  if total_ship != request.POST['shipping']:
-    wrong_order('shipping', 'order', total_ship, request.POST['shipping'])
+  if total_ship != form_shipping:
+    wrong_order('shipping', 'name', total_ship, form_shipping)
 
   # verifying payment is in US dollars
-  if request.POST['currency'] != 'USD':
-      wrong_order('currency', 'currency', 'USD', request.POST['currency'])
+  if form_currency != 'USD':
+      wrong_order('currency', name, 'USD', form_currency)
 
-  total = total_ship + total_tax + total_price
+  total = db_ship + db_tax + db_price
 
-  import random
-  import time
+  if total != form_total:
+    wrong_order('total', name, total, form_total)
 
-  invoice_id = random.randint(0,settings.MAX_INVOICE)
-  invoice_id += time.clock()
-
-  paypal_dict = {
+  context = {
       "business": settings.PAYPAL_RECEIVER_EMAIL,
       "amount": total,
-      "item_name": "Crimson Store Purchase",
-      "invoice": invoice_id,
-      "notify_url": "http://crimsonstore.heroku.com/cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt",
-      "return_url": base_url + 'success',
-      "cancel_return": base_url + 'cancel',
-      "custom": True
-  }
+      "name": name
+    }
 
-  # Create the instance.
-  form = PayPalPaymentsForm(initial=paypal_dict)
-
-  # change to form.render() when live. form.sandbox() when testing
-  context = {"form": form.render()}
-
-  return render_to_response("paypal.html", context)
+  return render_to_response("success.html", context, context_instance=RequestContext(request))
 
 def Cancel(request):
   return render_to_response('cancel.html', context, context_instance=RequestContext(request))

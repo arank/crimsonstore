@@ -163,4 +163,3 @@ except ImportError:
 # PayPal configuration
 PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitator@thecrimson.com'
 SITE_NAME = 'http://crimsonstore.heroku.com'
-MAX_INVOICE = 999999

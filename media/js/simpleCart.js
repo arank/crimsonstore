@@ -954,6 +954,7 @@
 							send;
 	
 						// basic item data
+						data["item_id_" + counter] = item.get('id');
 						data["item_name_" + counter] = item.get("name");
 						data["quantity_" + counter] = item.quantity();
 						data["amount_" + counter] = (item.price()*1).toFixed(2);
