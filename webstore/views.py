@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import redirect
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.template import RequestContext
 from webstore.models import *
 from paypal.standard.forms import PayPalPaymentsForm
@@ -97,6 +98,7 @@ def Search(request):
 
 ## PayPal #*
 ## We are using SimpleCartJS. This is the sample data fed to this view.
+@csrf_exempt
 def Success(request):
 
   # function to gracefully throw Wrong Order error
