@@ -153,7 +153,7 @@ def Success(request):
   db_ship = 0
 
   # Verify each item (price, shipping, tax)
-  for x in item_range(1, item_count + 1) :
+  for x in range(1, item_count + 1) :
 
     xstring = str(x)
 
