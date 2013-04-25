@@ -209,7 +209,7 @@ def Success(request):
   context = {
       "business": settings.PAYPAL_RECEIVER_EMAIL,
       "amount": total,
-      "name": name
+      "name": name,
       'email': email
     }
 
