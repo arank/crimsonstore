@@ -119,7 +119,7 @@ def Success(request):
 
   # function to verify item (subtotal, tax, and shipping)
   def subtotal_ship_tax(tax_rate, shipping_rate, price, quantity):
-    sutotal = price * quantity
+    subtotal = price * quantity
     tax = tax_rate * subtotal
     shipping = shipping_rate * subtotal
     return (sutotal, tax, shipping)
