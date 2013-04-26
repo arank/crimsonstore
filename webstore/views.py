@@ -1,15 +1,12 @@
-from django.shortcuts import render_to_response
-from django.shortcuts import redirect
+from django.db.models import Q
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render_to_response
+from django.shortcuts import redirect
 from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
 from webstore.models import *
-from webstore.paypal import Endpoint
-from webstore.paypal import verify_data as get_context
-
-
-# Paypal IPN verification classes
+from webstore.paypal import Endpoint, verify_data
 
 
 # Create your views here.
@@ -55,8 +52,6 @@ def Cart(request):
 
 
 import re
-
-from django.db.models import Q
 def get_query(query_string, search_fields):
   ''' Returns a query, that is a combination of Q objects. That combination
         aims to search keywords within a model by testing the given search fields.
@@ -102,7 +97,6 @@ def Search(request):
 #############################
 
 ## PayPal #*
-## We are using SimpleCartJS. This is the sample data fed to this view.
 @csrf_exempt
 def Success(request):
   if request.method == 'POST':
@@ -111,8 +105,27 @@ def Success(request):
     return redirect('/')
 
   # Takes care of verifying data and emailing
-  context = get_context(request,data)
-  return render_to_response("success.html", context, context_instance=RequestContext(request))
+  # Will return something like the below, where item_name is the first item with the invalid data
+  '''
+  context = { 'verified'      : 'no',
+                'error'         : error,
+                'item_name'     : name,
+                'right_value'   : right_value,
+                'wrong_value'   : wrong_value }  '''
+  # Otherwise context will basically contain the following:
+  '''
+  context = { 'verified'  : 'yes',
+              'business'  : settings.PAYPAL_RECEIVER_EMAIL,
+              'amount'    : total,
+              'name'      : name,
+              'email'     : email }
+  '''
+  context = verify_data(request,data)
+
+  if context['verified'] = 'yes':
+    return render_to_response("success.html", context, context_instance=RequestContext(request))
+  else
+    return render_to_response('wrong_order.html'), context, context_instance=RequestContext(request))
 
 def Cancel(request):
   return render_to_response('cancel.html', context_instance=RequestContext(request))

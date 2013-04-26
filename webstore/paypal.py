@@ -58,12 +58,16 @@ class AppEngineEndpoint(Endpoint):
 
 
 # Own internal data verification
-def verify_data(request,data):
+def verify_data(data):
 
   # function to gracefully throw Wrong Order error
   def wrong_order(error, name, right_value, wrong_value):
-    context = {'error':error,'item_name':name,'right_value':right_value,'wrong_value':wrong_value}
-    return render_to_response('wrong_order.html', context, context_instance=RequestContext(request))
+    context = { 'verified'      : 'no',
+                'error'         : error,
+                'item_name'     : name,
+                'right_value'   : right_value,
+                'wrong_value'   : wrong_value }
+    return context
 
   # function to verify overall data
   def verify(data, name):
@@ -116,34 +120,34 @@ def verify_data(request,data):
     xstring = str(x)
 
     # item data from request
-    item_name = data['item_name' + xstring]
-    item_quantity = int(data['quantity' + xstring])
-    item_price = float(data['mc_gross_' + xstring])
-    item_shipping = float(data['mc_shipping' + xstring]) + float(data['mc_shipping' + xstring])
-    item_tax = float(data['tax' + xstring])
+    event_name = data['item_name' + xstring]
+    p_quantity = int(data['quantity' + xstring])
+    p_price = float(data['mc_gross_' + xstring])
+    p_shipping = float(data['mc_shipping' + xstring]) + float(data['mc_shipping' + xstring])
+    p_tax = float(data['tax' + xstring])
 
     # item data from database (replace this with ID soon)
-    db_item = Event.objects.get(name=item_name)
+    db_event = Event.objects.get(name=p_name)
     db_price = float(db_item.price_in_dollars)
 
     # summing it up
-    (subtotal, tax, shipping) = subtotal_ship_tax(0.0, 0.0, item_quantity, db_price)
+    (subtotal, tax, shipping) = subtotal_ship_tax(0.0, 0.0, p_quantity, db_price)
 
-    if subtotal != item_price:
-      wrong_order('price', item_name, subtotal, item_price)
+    if subtotal != p_price:
+      wrong_order('price', event_name, subtotal, p_price)
 
-    if tax != item_tax:
-      wrong_order('tax', item_name, tax, item_tax)
+    if tax != p_tax:
+      wrong_order('tax', event_name, tax, p_tax)
 
-    if shipping != item_shipping:
-      wrong_order('shipping', item_name, shipping, item_shipping)
+    if shipping != p_shipping:
+      wrong_order('shipping', p_name, shipping, p_shipping)
 
     total_price += subtotal
     total_tax += tax
     total_ship += shipping
 
-    photos = [db_item.photo1, db_item.photo2, db_item.photo3]
-    photo_urls[item_name] = photos
+    photos = Photos.objects.filter(event=db_event)
+    photo_urls[event_name] = [photo.originalURL for photo in photos]
 
   # verifying totals
   form_tax = float(data['tax'])
@@ -167,10 +171,10 @@ def verify_data(request,data):
   # send email here
   email = data['payer_email']
 
-  context = {
-      "business": settings.PAYPAL_RECEIVER_EMAIL,
-      "amount": total,
-      "name": name,
-      "email": email }
+  context = { 'verified'  : 'yes',
+              'business'  : settings.PAYPAL_RECEIVER_EMAIL,
+              'amount'    : total,
+              'name'      : name,
+              'email'     : email }
 
   return context
