@@ -1,7 +1,38 @@
 {% extends "base.html" %}
+<script type="text/javascript">
+	simpleCart.empty();
+</script>
 
 {% block content %}
+	<div class="container">
+          						<ul class="nav">
+                   <!--      <li><input type="text" /></li> -->
+            						<li ><a href="/">Home</a></li>
+                        <li><a href="/products/">Products</a></li>
+                        <li><a href="/events/">Photos</a></li>
+                        <li><a href="">Issues</a></li>
+                        </ul>
+        					</div>
+      				</div>
+    			</div>
+			</div>
+		  </div>
+        
+        <div class="sectiontitle">
+        <div class="categorydropdown">
+          <div class="btn-group">
+            <button class="btn dropdown-toggle" data-toggle="dropdown">Order By <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li><a href="#">Test</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+      </div>
 
-<p>Test</p>
+
+	<div>
+    We're sorry. There was an error processing your order. The order {{ error }}. For {{ item_name }} the expected value was {{ right_value }}, but the received value was {{ wrong_value }}.
+	</div>
 
 {% endblock %}

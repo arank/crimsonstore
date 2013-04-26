@@ -74,11 +74,11 @@ def verify_data(data):
     # payer verification
     payment_status = data.get('payment_status', '')
     if payment_status != 'Completed':
-      wrong_order('uncompleted', name, 'Completed', payment_status)
+      wrong_order('was uncompleted', name, 'Completed', payment_status)
 
     payer_status = data.get('payer_status', '')
     if payer_status != 'verified':
-      wrong_order('unverified', name, 'verified', payer_status)
+      wrong_order('was unverified', name, 'verified', payer_status)
 
   # function to verify item (subtotal, tax, and shipping)
   def subtotal_ship_tax(tax_rate, shipping_rate, price, quantity):
@@ -97,11 +97,11 @@ def verify_data(data):
   # item verification
   item_count = int(data.get('num_cart_items', '0'))
   if item_count == 0:
-    wrong_order('zero_items', name, 1, item_count)
+    wrong_order('had zero items', name, 1, item_count)
 
   form_total = float(data['mc_gross']) - float(data['mc_fee'])
   if form_total == 0.0:
-    wrong_order('zero_payment', name, 1., total)
+    wrong_order('had to payment', name, 1., total)
 
   # other data
   tax = float(data.get('tax','0.0'))
@@ -134,13 +134,13 @@ def verify_data(data):
     (subtotal, tax, shipping) = subtotal_ship_tax(0.0, 0.0, p_quantity, db_price)
 
     if subtotal != p_price:
-      wrong_order('price', event_name, subtotal, p_price)
+      wrong_order('had wrong price', event_name, subtotal, p_price)
 
     if tax != p_tax:
-      wrong_order('tax', event_name, tax, p_tax)
+      wrong_order('had wrong tax', event_name, tax, p_tax)
 
     if shipping != p_shipping:
-      wrong_order('shipping', p_name, shipping, p_shipping)
+      wrong_order('had wrong shippping', p_name, shipping, p_shipping)
 
     total_price += subtotal
     total_tax += tax
@@ -157,16 +157,16 @@ def verify_data(data):
     wrong_order('tax', name, total_tax, form_tax)
 
   if total_ship != form_shipping:
-    wrong_order('shipping', 'name', total_ship, form_shipping)
+    wrong_order('had wrong shipping', 'name', total_ship, form_shipping)
 
   # verifying payment is in US dollars
   if form_currency != 'USD':
-      wrong_order('currency', name, 'USD', form_currency)
+      wrong_order('had wrong currency', name, 'USD', form_currency)
 
   total = total_ship + total_tax + total_price
 
   if total != form_total:
-    wrong_order('total', name, total, form_total)
+    wrong_order('had wrong total', name, total, form_total)
 
   # send email here
   email = data['payer_email']
