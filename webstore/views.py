@@ -124,7 +124,7 @@ def Success(request):
 
   if context['verified'] == 'yes':
     return render_to_response("success.html", context, context_instance=RequestContext(request))
-  else
+  else:
     return render_to_response('wrong_order.html'), context, context_instance=RequestContext(request))
 
 def Cancel(request):
