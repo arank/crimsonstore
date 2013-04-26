@@ -88,7 +88,7 @@ def verify_data(data):
   last_name = data.get('last_name', '')
   name = first_name + last_name
 
-  verify(request, name)
+  verify(data, name)
 
   # item verification
   item_count = int(data.get('num_cart_items', '0'))
