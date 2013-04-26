@@ -7,7 +7,6 @@ from django.template import RequestContext
 from webstore.models import *
 from webstore.paypal import Endpoint
 from webstore.paypal import verify_data as get_context
-from paypal.standard.forms import PayPalPaymentsForm
 
 
 # Paypal IPN verification classes
@@ -108,7 +107,7 @@ def Search(request):
 def Success(request):
   if request.method == 'POST':
     data = dict(request.POST.items())
-  else
+  else:
     return redirect('/')
 
   # Takes care of verifying data and emailing
@@ -120,7 +119,8 @@ def Cancel(request):
 
 # IPN implementation
 @csrf_exempt
-class PayPalIPN(Endpoint):
+class PaypalIPN(Endpoint):
+
   def process(self, data):
     context = get_context(data)
     return render_to_response("success.html", context, context_instance=RequestContext(request))

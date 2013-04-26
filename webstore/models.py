@@ -1,7 +1,4 @@
 from django.db import models
-from paypal.standard.ipn.signals import payment_was_successful
-
-
 
 # Create your models here.
 

@@ -1,5 +1,11 @@
-from django.http import HttpResponse
+from django.shortcuts import render_to_response
+from django.shortcuts import redirect
 from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.template import RequestContext
+from webstore.models import *
+from django.http import HttpResponse
 import urllib
 
 class Endpoint:

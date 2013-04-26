@@ -3,6 +3,7 @@ from django.views.generic.simple import direct_to_template
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from webstore.views import PaypalIPN
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
