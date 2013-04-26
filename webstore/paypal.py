@@ -128,7 +128,7 @@ def verify_data(data):
 
     # item data from database (replace this with ID soon)
     db_event = Event.objects.get(name=event_name)
-    db_price = float(db_item.price_in_dollars)
+    db_price = float(db_event.price_in_dollars)
 
     # summing it up
     (subtotal, tax, shipping) = subtotal_ship_tax(0.0, 0.0, p_quantity, db_price)
