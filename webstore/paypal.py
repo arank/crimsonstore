@@ -127,7 +127,7 @@ def verify_data(data):
     p_tax = float(data['tax' + xstring])
 
     # item data from database (replace this with ID soon)
-    db_event = Event.objects.get(name=p_name)
+    db_event = Event.objects.get(name=event_name)
     db_price = float(db_item.price_in_dollars)
 
     # summing it up
@@ -140,7 +140,7 @@ def verify_data(data):
       wrong_order('had wrong tax', event_name, tax, p_tax)
 
     if shipping != p_shipping:
-      wrong_order('had wrong shippping', p_name, shipping, p_shipping)
+      wrong_order('had wrong shippping', event_name, shipping, p_shipping)
 
     total_price += subtotal
     total_tax += tax
