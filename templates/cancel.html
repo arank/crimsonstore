@@ -1,9 +1,25 @@
 {% extends "base.html" %}
-<script type="text/javascript">
-	simpleCart.empty();
-</script>
 
+{% block cart %}
+	{{ block.super }}
+	<script>
+		simpleCart.empty();
+	</script>
+{% endblock %}
 {% block content %}
+					<div class="container">
+							<ul class="nav">
+				   <!--      <li><input type="text" /></li> -->
+								<li ><a href="/">Home</a></li>
+				        <li><a href="/products/">Products</a></li>
+				        <li><a href="/events/">Photos</a></li>
+				        <li><a href="">Issues</a></li>
+				        </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+  	</div>
 	<div class="container">
 	 Your order was cancelled successfully.
 	</div>
