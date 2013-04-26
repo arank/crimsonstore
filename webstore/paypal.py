@@ -1,9 +1,4 @@
-from django.shortcuts import render_to_response
-from django.shortcuts import redirect
 from django.conf import settings
-from django.core.urlresolvers import reverse
-from django.views.decorators.csrf import csrf_exempt
-from django.template import RequestContext
 from webstore.models import *
 from django.http import HttpResponse
 import urllib
@@ -146,7 +141,7 @@ def verify_data(data):
     total_tax += tax
     total_ship += shipping
 
-    photos = Photos.objects.filter(event=db_event)
+    photos = Photo.objects.filter(event=db_event)
     photo_urls[event_name] = [photo.originalURL for photo in photos]
 
   # verifying totals
