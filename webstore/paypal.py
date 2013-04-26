@@ -58,7 +58,7 @@ class AppEngineEndpoint(Endpoint):
 
 
 # Own internal data verification
-def verify_data(data):
+def verify_data(request,data):
 
   # function to gracefully throw Wrong Order error
   def wrong_order(error, name, right_value, wrong_value):

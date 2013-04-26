@@ -111,7 +111,7 @@ def Success(request):
     return redirect('/')
 
   # Takes care of verifying data and emailing
-  context = get_context(data)
+  context = get_context(request,data)
   return render_to_response("success.html", context, context_instance=RequestContext(request))
 
 def Cancel(request):
@@ -122,7 +122,7 @@ def Cancel(request):
 class PaypalIPN(Endpoint):
 
   def process(self, data):
-    context = get_context(data)
+    context = get_context(request,data)
     return render_to_response("success.html", context, context_instance=RequestContext(request))
       
   def process_invalid(self, data):
