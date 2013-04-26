@@ -50,9 +50,9 @@ class EventCategory(models.Model):
   name = models.CharField(max_length=300)
   slug = models.SlugField(max_length=150) 
   description = models.TextField()
-  photo1 = models.ImageField(upload_to='product_photos/') 
-  photo2 = models.ImageField(upload_to='product_photos/')
-  photo3 = models.ImageField(upload_to='product_photos/')
+  # photo1 = models.ImageField(upload_to='product_photos/') 
+  # photo2 = models.ImageField(upload_to='product_photos/')
+  # photo3 = models.ImageField(upload_to='product_photos/')
   def __unicode__(self):
     return u'%s' % (self.name)
 
@@ -67,9 +67,9 @@ class Event(models.Model):
                            related_name='events')
   description = models.TextField()
   photographer = models.CharField(max_length=300)
-  photo1 = models.ImageField(upload_to='product_photos/') 
-  photo2 = models.ImageField(upload_to='product_photos/')
-  photo3 = models.ImageField(upload_to='product_photos/')
+  # photo1 = models.ImageField(upload_to='product_photos/') 
+  # photo2 = models.ImageField(upload_to='product_photos/')
+  # photo3 = models.ImageField(upload_to='product_photos/')
   def __unicode__(self):
     return u'%s' % (self.name)
 
@@ -77,13 +77,16 @@ class Event(models.Model):
 class Photo(models.Model):
   event = models.ForeignKey('Event',
                            related_name='photos')
+  keyImageForCategory = models.ForeignKey(EventCategory, null=True, blank=True)
+  keyImageForEvent    = models.ForeignKey(Event, null=True, blank=True)
   lightboxURL = models.URLField()
+  largeURL    = models.URLField()
   mediumURL   = models.URLField()
   originalURL = models.URLField()
   smallURL    = models.URLField()
   thumbURL    = models.URLField()
   tinyURL     = models.URLField()
-  url         = models.URLField()  
+  url         = models.URLField() 
 
 ##########################
 
