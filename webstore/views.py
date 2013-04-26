@@ -120,7 +120,7 @@ def Success(request):
               'name'      : name,
               'email'     : email }
   '''
-  context = verify_data(request,data)
+  context = verify_data(data)
 
   if context['verified'] == 'yes':
     return render_to_response("success.html", context, context_instance=RequestContext(request))
