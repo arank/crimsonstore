@@ -122,7 +122,7 @@ def Success(request):
   '''
   context = verify_data(request,data)
 
-  if context['verified'] = 'yes':
+  if context['verified'] == 'yes':
     return render_to_response("success.html", context, context_instance=RequestContext(request))
   else
     return render_to_response('wrong_order.html'), context, context_instance=RequestContext(request))
