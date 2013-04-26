@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+<script type="text/javascript">
+	simpleCart.empty();
+</script>
+
+{% block content %}
+	         <div class="container">
+              <ul class="nav">
+           <!--      <li><input type="text" /></li> -->
+                <li ><a href="/">Home</a></li>
+                <li><a href="/products/">Products</a></li>
+                <li><a href="/events/">Photos</a></li>
+                <li><a href="">Issues</a></li>
+                </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+	<div class='container'>
+    Thank you, {{ name }} for your payment of ${{ amount }} to {{ business }}. Your transaction has been completed, and a receipt for your purchase has been emailed to you. Your photo(s) are also on their way. Check your email ({{ email }}) for more information. You may log into your account at www.paypal.com to view details of this transaction.
+	</div>
+
+{% endblock %}

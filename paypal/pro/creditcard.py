@@ -12,8 +12,8 @@ import re
 # Well known card regular expressions.
 CARDS = {
     'Visa': re.compile(r"^4\d{12}(\d{3})?$"),
-    'Mastercard': re.compile(r"(5[1-5]\d{4}|677189)\d{10}$"),
-    'Dinersclub': re.compile(r"^3(0[0-5]|[68]\d)\d{11}"),
+    'Mastercard': re.compile(r"^(5[1-5]\d{4}|677189)\d{10}$"),
+    'Dinersclub': re.compile(r"^3(0[0-5]|[68]\d)\d{11}$"),
     'Amex': re.compile("^3[47]\d{13}$"),
     'Discover': re.compile("^(6011|65\d{2})\d{12}$"),
 }
@@ -50,6 +50,9 @@ class CreditCard(object):
 
     def is_test(self):
         """Returns True if number is a test card number."""
+        # Note: test numbers cannot be used in the PP Pro sandbox.
+        # Instead, use the credit card number associated with a
+        # sandbox account (Test Accounts -> View Details).
         return self.number in TEST_NUMBERS
 
     def get_type(self):

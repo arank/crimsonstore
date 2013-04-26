@@ -161,5 +161,5 @@ except ImportError:
     pass
 
 # PayPal configuration
-PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitaor@thecrimson.com'
+PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitator@thecrimson.com'
 SITE_NAME = 'http://crimsonstore.heroku.com'

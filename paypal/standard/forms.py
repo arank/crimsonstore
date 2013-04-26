@@ -46,7 +46,11 @@ class PayPalPaymentsForm(forms.Form):
         (1, "reattempt billing on Failure"), 
         (0, "Do Not reattempt on failure")
     )
-        
+
+    BUY = 'buy'
+    SUBSCRIBE = 'subscribe'
+    DONATE = 'donate'
+
     # Where the money goes.
     business = forms.CharField(widget=ValueHiddenInput(), initial=RECEIVER_EMAIL)
     
@@ -110,17 +114,22 @@ class PayPalPaymentsForm(forms.Form):
         
     def get_image(self):
         return {
-            (True, True): SUBSCRIPTION_SANDBOX_IMAGE,
-            (True, False): SANDBOX_IMAGE,
-            (False, True): SUBSCRIPTION_IMAGE,
-            (False, False): IMAGE
-        }[TEST, self.is_subscription()]
+            (True, self.SUBSCRIBE): SUBSCRIPTION_SANDBOX_IMAGE,
+            (True, self.BUY): SANDBOX_IMAGE,
+            (True, self.DONATE): DONATION_SANDBOX_IMAGE,
+            (False, self.SUBSCRIBE): SUBSCRIPTION_IMAGE,
+            (False, self.BUY): IMAGE,
+            (False, self.DONATE): DONATION_IMAGE,
+        }[TEST, self.button_type]
 
     def is_transaction(self):
-        return self.button_type == "buy"
+        return not self.is_subscription()
+
+    def is_donation(self):
+        return self.button_type == self.DONATE
 
     def is_subscription(self):
-        return self.button_type == "subscribe"
+        return self.button_type == self.SUBSCRIBE
 
 
 class PayPalEncryptedPaymentsForm(PayPalPaymentsForm):
@@ -156,26 +165,26 @@ class PayPalEncryptedPaymentsForm(PayPalPaymentsForm):
                 plaintext += u'%s=%s\n' % (name, value)
         plaintext = plaintext.encode('utf-8')
         
-    	# Begin crypto weirdness.
-    	s = SMIME.SMIME()	
-    	s.load_key_bio(BIO.openfile(CERT), BIO.openfile(PUB_CERT))
-    	p7 = s.sign(BIO.MemoryBuffer(plaintext), flags=SMIME.PKCS7_BINARY)
-    	x509 = X509.load_cert_bio(BIO.openfile(settings.PAYPAL_CERT))
-    	sk = X509.X509_Stack()
-    	sk.push(x509)
-    	s.set_x509_stack(sk)
-    	s.set_cipher(SMIME.Cipher('des_ede3_cbc'))
-    	tmp = BIO.MemoryBuffer()
-    	p7.write_der(tmp)
-    	p7 = s.encrypt(tmp, flags=SMIME.PKCS7_BINARY)
-    	out = BIO.MemoryBuffer()
-    	p7.write(out)	
-    	return out.read()
-    	
+        # Begin crypto weirdness.
+        s = SMIME.SMIME()
+        s.load_key_bio(BIO.openfile(CERT), BIO.openfile(PUB_CERT))
+        p7 = s.sign(BIO.MemoryBuffer(plaintext), flags=SMIME.PKCS7_BINARY)
+        x509 = X509.load_cert_bio(BIO.openfile(settings.PAYPAL_CERT))
+        sk = X509.X509_Stack()
+        sk.push(x509)
+        s.set_x509_stack(sk)
+        s.set_cipher(SMIME.Cipher('des_ede3_cbc'))
+        tmp = BIO.MemoryBuffer()
+        p7.write_der(tmp)
+        p7 = s.encrypt(tmp, flags=SMIME.PKCS7_BINARY)
+        out = BIO.MemoryBuffer()
+        p7.write(out)
+        return out.read()
+    
     def as_p(self):
         return mark_safe(u"""
 <input type="hidden" name="cmd" value="_s-xclick" />
-<input type="hidden" name="encrypted" value="%s" />            
+<input type="hidden" name="encrypted" value="%s" />
         """ % self._encrypt())
 
 
@@ -190,7 +199,7 @@ class PayPalSharedSecretEncryptedPaymentsForm(PayPalEncryptedPaymentsForm):
     def __init__(self, *args, **kwargs):
         "Make the secret from the form initial data and slip it into the form."
         from paypal.standard.helpers import make_secret
-        super(PayPalSharedSecretEncryptedPaymentsForm, self).__init__(self, *args, **kwargs)
+        super(PayPalSharedSecretEncryptedPaymentsForm, self).__init__(*args, **kwargs)
         # @@@ Attach the secret parameter in a way that is safe for other query params.
         secret_param = "?secret=%s" % make_secret(self)
         # Initial data used in form construction overrides defaults

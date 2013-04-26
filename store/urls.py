@@ -3,6 +3,7 @@ from django.views.generic.simple import direct_to_template
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from webstore.views import PaypalIPN
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -31,11 +32,12 @@ urlpatterns += patterns('webstore.views',
    url(r'^singleevent/(?P<eventslug>.*)/$', 'SpecificEvent'),
    url(r'^cart/$', 'Cart'),
    url(r'^search/$', 'Search'),
-   url(r'^checkout/$', 'Paypal', name='paypal')
+   url(r'^checkout-success/$', 'Success', name='success'),
+   url(r'^checkout-cancel/$', 'Cancel', name='cancel'),
 )
 
 # static media and file URLs
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + staticfiles_urlpatterns()
 
 # url for PayPal
-(r'^cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt', include('paypal.standard.ipn.urls'))
+(r'^cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt', PaypalIPN())

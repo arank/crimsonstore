@@ -1,10 +1,13 @@
-from django.shortcuts import render_to_response
-from django.shortcuts import redirect
+from django.db.models import Q
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.shortcuts import render_to_response
+from django.shortcuts import redirect
 from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
 from webstore.models import *
-from paypal.standard.forms import PayPalPaymentsForm
+from webstore.paypal import Endpoint, verify_data
+
 
 # Create your views here.
 def ProductsAll(request):
@@ -41,7 +44,7 @@ def SpecificEvent(request, eventslug):
 
 
 def Cart(request):
-  base_url = request.build_absolute_uri('/checkout/')
+  base_url = request.build_absolute_uri('/checkout')
   context = {'base_url' : base_url}
   return render_to_response('cart.html', context, context_instance=RequestContext(request))
 
@@ -49,8 +52,6 @@ def Cart(request):
 
 
 import re
-
-from django.db.models import Q
 def get_query(query_string, search_fields):
   ''' Returns a query, that is a combination of Q objects. That combination
         aims to search keywords within a model by testing the given search fields.
@@ -96,95 +97,47 @@ def Search(request):
 #############################
 
 ## PayPal #*
-## We are using SimpleCartJS. This is the sample data fed to this view.
-  ''' 
-  currency=USD
-  shipping=0
-  tax=0
-  taxRate=0
-  itemCount=1
-  item_name_1=Crew
-  item_quantity_1=11
-  item_price_1=200
-  item_options_1=
-  return=http%3A%2F%2Fcrimsonstore.heroku.com%2Fsuccess
-  cancel_return=http%3A%2F%2Fcrimsonstore.heroku.com%2Fcancel
+@csrf_exempt
+def Success(request):
+  if request.method == 'POST':
+    data = dict(request.POST.items())
+  else:
+    return redirect('/')
+
+  # Takes care of verifying data and emailing
+  # Will return something like the below, where item_name is the first item with the invalid data
   '''
-def Paypal(request):
+  context = { 'verified'      : 'no',
+                'error'         : error,
+                'item_name'     : name,
+                'right_value'   : right_value,
+                'wrong_value'   : wrong_value }  '''
+  # Otherwise context will basically contain the following:
+  '''
+  context = { 'verified'  : 'yes',
+              'business'  : settings.PAYPAL_RECEIVER_EMAIL,
+              'amount'    : total,
+              'name'      : name,
+              'email'     : email }
+  '''
+  context = verify_data(data)
 
-  if request.method == 'GET':
-      return redirect('/')
-
-  # function to calculate shipping and tax. Returns (subtotal, tax, shipping)
-  def subtotal_ship_tax(tax_rate = 0, ship_rate = 0, items = 0, price = 0):
-    subtotal = items * price
-    (subtotal, tax_rate * subtotal, ship_rate * items)
-
-  # function to gracefully throw Wrong Order error
-  def wrong_order(error, name, right_value, wrong_value):
-    context = {'error':error,'item_name':name,'right_value':right_value,'wrong_value':wrong_value}
+  if context['verified'] == 'yes':
+    return render_to_response("success.html", context, context_instance=RequestContext(request))
+  else:
     return render_to_response('wrong_order.html', context, context_instance=RequestContext(request))
 
-  # static vars
-  base_url = 'http://crimsonstore.heroku.com/checkout/'
-  item_count = int(request.POST['itemCount'])
-  
-  # keep track of total price
-  total_price = 0
-  total_tax = 0
-  total_ship = 0
+def Cancel(request):
+  return render_to_response('cancel.html', context_instance=RequestContext(request))
 
-  # Verify each item (price, shipping, tax)
-  while item_count > 0 :
+# IPN implementation
+@csrf_exempt
+class PaypalIPN(Endpoint):
 
-    # item data from request
-    item_name = request.POST['item_name_' + item_count]
-    item_price = request.POST['item_price_' + item_count]
-    item_quantity = request.POST['item_quantity_' + item_count]
-
-    # item data from database
-    db_item = Product.objects.get(name=item_name)
-    db_price = db_item.price_in_dollars
-
-    # verifying price
-    if db_price != item_price:
-        wrong_order('price', item_name, db_price, item_price)
-
-    # tax data
-    tax_rate = request.POST['taxRate']
-
-    # summing it up
-    (subtotal, tax, shipping) = subtotal_ship_tax(tax_rate, 0, item_quantity, db_price)
-    total_price += subtotal
-    total_tax += tax
-    total_ship += shipping
-
-  # verifying totals
-  if total_tax != request.POST['tax']:
-    wrong_order('tax', 'order', total_tax, request.POST['tax'])
-
-  if total_ship != request.POST['shipping']:
-    wrong_order('shipping', 'order', total_ship, request.POST['shipping'])
-
-  # verifying payment is in US dollars
-  if request.POST['currency'] != 'USD':
-      wrong_order('currency', 'currency', 'USD', request.POST['currency'])
-
-  total = total_ship + total_tax + total_price
-  paypal_dict = {
-      "business": settings.PAYPAL_RECEIVER_EMAIL,
-      "amount": total,
-      "item_name": "name of the item",
-      "invoice": "unique-invoice-id",
-      "notify_url": "%s%s" % (settings.SITE_NAME, reverse('paypal-ipn')),
-      "return_url": base_url + 'success',
-      "cancel_return": base_url + 'cancel',
-      "custom": True
-  }
-
-  # Create the instance.
-  form = PayPalPaymentsForm(initial=paypal_dict)
-
-  # change to form.render() when live. form.sandbox() when testing
-  context = {"form": form.sandbox()}
-  return render_to_response("paypal.html", context)
+  def process(self, data):
+    context = get_context(request,data)
+    return render_to_response("success.html", context, context_instance=RequestContext(request))
+      
+  def process_invalid(self, data):
+    # should probably log this somewhere
+    return render_to_response('cancel.html', context_instance=RequestContext(request))

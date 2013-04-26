@@ -19,6 +19,7 @@ class DummyPayPalPDT(object):
                              'business': settings.PAYPAL_RECEIVER_EMAIL, 'error': 'Error code: 1234'}
         
         self.context_dict.update(update_context_dict)
+        self.response = ''
         
     def update_with_get_params(self, get_params):
         if get_params.has_key('tx'):
