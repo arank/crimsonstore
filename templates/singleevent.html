@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 
-{% load watermark %}
 {% block content %}
         <div class="container">
           						<ul class="nav">
@@ -29,11 +28,11 @@
                           <div class="simpleCart_shelfItem">
                             <table>
                               <tr>
+                                {% for photo in photos %}
                                 <td>
-                                  {% for photo in photos %}
-                                  <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="{{ photo.thumbURL }}">
-                                  {% endfor %}
+                                  <img alt="300x200" style="width: 300px; " src="{{ photo.smallURL }}">
                                 </td>
+                                {% endfor %}
                               </tr>
                             </table>
                             <div class="caption" style="float:clear;">
@@ -50,30 +49,6 @@
         <hr>
         </div>
 
-         <ul class="thumbnails">
-       
-                {% for photo in photos %}
-          
-                <li class="span3">
-                  <div class="thumbnail">
-                    <div class="simpleCart_shelfItem">
-                    <!-- <img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}"> -->
-                    <a href="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}"><img data-src="holder.js/300x200" alt="#" src="{{ photo.photo.url|watermark:"testmark,position=br,opacity=35" }}"></a>
-                    <div class="caption">
-                      <div class="item_name" style="visibility: hidden">{{ event.name }} Photo {{ photo.id }}</div>
-                      <span class="item_price"> ${{ event.price_in_dollars }} </span><br>
-                      <span style='display:none;' class='item_id'>{{ event.id }}</span>
-                      <p><a href="javascript:;" class="btn btn-danger item_add">Add Photo to Cart <i class="icon-shopping-cart icon-white"></i></a></p>
-                    </div>                    
-                    </div>
-                  </div>
-                </li>
-
-                {% if forloop.counter|divisibleby:3 %} </ul><ul class="thumbnails">  {% endif %}
-            
-            {% endfor %}
-                
-                </ul>
         
 
 {% endblock %}

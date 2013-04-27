@@ -25,23 +25,14 @@ def SpecificProduct(request, productslug):
 
 def EventsAll(request):
   categories = EventCategory.objects.all().order_by('name')
-  photos = {}
-  for category in categories:
-    photos[category] = category.get_key_images()
-  context = { 'events'  : categories,
-              'photos'  : photos }
+  context = ({'events': categories})
   return render_to_response('eventsall.html', context, context_instance=RequestContext(request))
  
 
 def Category(request, categoryslug):
   single_category = EventCategory.objects.get(slug=categoryslug)
   events = Event.objects.filter(category=single_category)
-  photos = {}
-  for event in events:
-    photos[event] = event.get_key_images()
-  context = { 'events'  : events, 
-              'category': single_category,
-              'photos'  : photos }
+  context = {'events': events, 'category':single_category}
   return render_to_response('category.html', context, context_instance=RequestContext(request))
 
 

@@ -34,11 +34,11 @@
                           <div class="thumbnail">
                             <table>
                               <tr>
+                                {% for photo in event.get_key_images %}
                                 <td>
-                                  {% for photo in photos.event %}
-                                  <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="{{ photo.thumbURL }}">
-                                  {% endfor %}
+                                  <img alt="300x200" style="width: 300px;" src="{{ photo.smallURL }}">
                                 </td>
+                                {% endfor %}
                               </tr>
                             </table>
                             <div class="caption" style="float:clear;">
