@@ -27,7 +27,7 @@ def EventsAll(request):
   categories = EventCategory.objects.all().order_by('name')
   photos = {}
   for category in categories:
-    photos[category.id] = Photos.objects.filter(keyImageForCategory=category)
+    photos[category] = category.get_key_images()
   context = { 'events'  : categories,
               'photos'  : photos }
   return render_to_response('eventsall.html', context, context_instance=RequestContext(request))
@@ -38,7 +38,7 @@ def Category(request, categoryslug):
   events = Event.objects.filter(category=single_category)
   photos = {}
   for event in events:
-    photos[event] = Photos.objects.filter(keyImageForEvent=event)
+    photos[event] = event.get_key_images()
   context = { 'events'  : events, 
               'category': single_category,
               'photos'  : photos }
