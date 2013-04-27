@@ -4,7 +4,9 @@ from models import *
 import re
 from smugpy import SmugMug
 
-def sync():
+
+# Sync n albums
+def sync_n(n):
     print "LOGGING IN..."
     smugmug = SmugMug(api_key=login_info.API_KEY, api_version="1.2.2", 
         app_name="CrimsonStore")
@@ -26,10 +28,10 @@ def sync():
     else:
         catalog = Catalog.objects.all()[0]
 
-    albums = smugmug.albums_get(NickName="thecrimson")
-    album_len = len(albums["Albums"])
+    albums = smugmug.albums_get(NickName="thecrimson")["Albums"][:n]
+    album_len = len(albums)
     categories = dict()
-    for index, album in enumerate(albums["Albums"]):
+    for index, album in enumerate(albums):
         cat_name = album["Category"]["Name"]
         new_category = False
         # Add EventCategory if it doesn't already exist
