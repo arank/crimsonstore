@@ -3,6 +3,7 @@ from webstore.models import *
 from django.http import HttpResponse
 import urllib
 
+# Modified from Django Snippets
 class Endpoint:
     
     default_response_text = 'Nothing to see here'
@@ -85,7 +86,7 @@ def verify_data(data):
   # customer name
   first_name = data.get('first_name', '')
   last_name = data.get('last_name', '')
-  name = first_name + last_name
+  name = first_name + ' ' + last_name
 
   verify(data, name)
 
@@ -94,7 +95,7 @@ def verify_data(data):
   if item_count == 0:
     wrong_order('had zero items', name, 1, item_count)
 
-  form_total = float(data['mc_gross']) - float(data['mc_fee'])
+  form_total = float(data['mc_gross']) # - float(data['mc_fee'])
   if form_total == 0.0:
     wrong_order('had to payment', name, 1., total)
 
@@ -163,7 +164,7 @@ def verify_data(data):
   if total != form_total:
     wrong_order('had wrong total', name, total, form_total)
 
-  # send email here
+  # send email here TODO
   email = data['payer_email']
 
   context = { 'verified'  : 'yes',
