@@ -46,15 +46,11 @@
                           <div class="simpleCart_shelfItem">
                             <table>
                               <tr>
+                                {% for photo in event.get_key_images %}
                                 <td>
-                                  <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="{{ event.photo1.url }}">
+                                  <img alt="300x200" style="width: 300px;" src="{{ photo.smallURL }}">
                                 </td>
-                                <td>
-                                  <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="{{ event.photo2.url }}">
-                                </td>
-                                <td>
-                                  <img data-src="holder.js/300x200" alt="300x200" style="width: 300px; height: 200px;" src="{{ event.photo3.url }}">
-                                </td>
+                                {% endfor %}
                               </tr>
                             </table>
                             <div class="caption" style="float:clear;">
