@@ -52,6 +52,8 @@ class EventCategory(models.Model):
   # photo3 = models.ImageField(upload_to='product_photos/')
   def __unicode__(self):
     return u'%s' % (self.name)
+  def get_key_images(self):
+    return Photo.objects.filter(keyImageForCategory=self)[:3]
 
 # Corresponds to Album on SmugMug
 class Event(models.Model):
@@ -69,6 +71,8 @@ class Event(models.Model):
   # photo3 = models.ImageField(upload_to='product_photos/')
   def __unicode__(self):
     return u'%s' % (self.name)
+  def get_key_images(self):
+    return Photo.objects.filter(keyImageForEvent=self)[:3]
 
 # Corresponds to Images from 
 class Photo(models.Model):
