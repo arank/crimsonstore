@@ -1,6 +1,8 @@
 from django.conf import settings
-from django.core.mail import send_mail
-from django.http import HttpResponse
+from django.core.mail import EmailMultiAlternatives
+from django.http import HttpResponse, Http404
+from django.template.loader import  get_template
+from django.template import Context
 from webstore.models import *
 import urllib
 
@@ -53,23 +55,60 @@ class AppEngineEndpoint(Endpoint):
             payload = urllib.urlencode(args)
         ).content
 
+def send_email(data):
+  plaintext = get_template('email.txt')
+  html = get_template('email.html')
+
+  d = Context(data)
+  suject, from_email = 'CrimsonStore Purchase', 'crimsonstore@thecrimson.com'
+  text_content = plaintext.render(d)
+  html_content = html.render(d)
+  to_list = [settings.PAYPAL_RECEIVER_EMAIL,data['email']]
+
+  for to in to_list:
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+  return True
+
+# function to gracefully throw Wrong Order error
+def wrong_order(error, name, right_value, wrong_value):
+  context = { 'verified'      : 'no',
+              'business'      : settings.PAYPAL_RECEIVER_EMAIL,
+              'error'         : error,
+              'item_name'     : name,
+              'right_value'   : right_value,
+              'wrong_value'   : wrong_value }
+  if send_mail(context):
+    return context
+  else:
+    raise Http404
+
+# function to verify item (subtotal, tax, and shipping)
+def subtotal_ship_tax(tax_rate, shipping_rate, price, quantity):
+  subtotal = price * quantity
+  tax = tax_rate * subtotal
+  shipping = shipping_rate * subtotal
+  return (subtotal, tax, shipping)  
 
 # Own internal data verification
+# Will return something like the below, where item_name is the first item with the invalid data
+'''
+context = { 'verified'      : 'no',
+              'error'         : error,
+              'item_name'     : name,
+              'right_value'   : right_value,
+              'wrong_value'   : wrong_value }  '''
+# Otherwise context will basically contain the following:
+'''
+context = { 'verified'  : 'yes',
+            'business'  : settings.PAYPAL_RECEIVER_EMAIL,
+            'amount'    : total,
+            'name'      : name,
+            'email'     : email }
+'''
 def verify_data(data):
-
-  # function to gracefully throw Wrong Order error
-  def wrong_order(error, name, right_value, wrong_value):
-    context = { 'verified'      : 'no',
-                'error'         : error,
-                'item_name'     : name,
-                'right_value'   : right_value,
-                'wrong_value'   : wrong_value }
-    
-    # notify the crimson
-    email = data['payer_email']
-    send_mail('Crimsonstore Purchase', 'TestMessage','crimsonstore@thecrimson.com',
-    [settings.PAYPAL_RECEIVER_EMAIL])
-    return context
 
   # function to verify overall data
   def verify(data, name):
@@ -81,13 +120,6 @@ def verify_data(data):
     payer_status = data.get('payer_status', '')
     if payer_status != 'verified':
       wrong_order('was unverified', name, 'verified', payer_status)
-
-  # function to verify item (subtotal, tax, and shipping)
-  def subtotal_ship_tax(tax_rate, shipping_rate, price, quantity):
-    subtotal = price * quantity
-    tax = tax_rate * subtotal
-    shipping = shipping_rate * subtotal
-    return (subtotal, tax, shipping)
 
   # customer name
   first_name = data.get('first_name', '')
@@ -172,8 +204,6 @@ def verify_data(data):
 
   # send email here TODO
   email = data['payer_email']
-  send_mail('Crimsonstore Purchase', 'TestMessage','crimsonstore@thecrimson.com',
-    [email])
 
   context = { 'verified'  : 'yes',
               'business'  : settings.PAYPAL_RECEIVER_EMAIL,
@@ -181,4 +211,7 @@ def verify_data(data):
               'name'      : name,
               'email'     : email }
 
-  return context
+  if send_mail(context):
+    return context
+  else:
+    raise Http404

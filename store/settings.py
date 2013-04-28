@@ -164,7 +164,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'crimsonstore.test@gmail.com'
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = 'paycr!mson'
+DEFAULT_FROM_EMAIL = 'crimsonstore.test@gmail.com'
+SERVER_EMAIL = 'crimsonstore.test@gmail.com'
 
 try:
     from local_settings import *

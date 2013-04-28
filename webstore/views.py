@@ -105,21 +105,6 @@ def Success(request):
     return redirect('/')
 
   # Takes care of verifying data and emailing
-  # Will return something like the below, where item_name is the first item with the invalid data
-  '''
-  context = { 'verified'      : 'no',
-                'error'         : error,
-                'item_name'     : name,
-                'right_value'   : right_value,
-                'wrong_value'   : wrong_value }  '''
-  # Otherwise context will basically contain the following:
-  '''
-  context = { 'verified'  : 'yes',
-              'business'  : settings.PAYPAL_RECEIVER_EMAIL,
-              'amount'    : total,
-              'name'      : name,
-              'email'     : email }
-  '''
   context = verify_data(data)
 
   if context['verified'] == 'yes':
