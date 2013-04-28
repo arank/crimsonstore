@@ -3,7 +3,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, Http404
 from django.template.loader import  get_template
 from django.template import Context
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.base import View
 from webstore.models import *
 import urllib
 
@@ -26,7 +28,11 @@ class Endpoint:
     def default_response(self):
         return HttpResponse(self.default_response_text)
     
-    def __call__(self, request):
+    @method_decorator(csrf_exempt)
+    def __call__(self,request):
+        return self.begin(self,request)
+
+    def begin(self, request):
         r = None
         if request.method == 'POST':
             data = dict(request.POST.items())
