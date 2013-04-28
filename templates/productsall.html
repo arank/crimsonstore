@@ -1,29 +1,20 @@
 {% extends "base.html" %}
+
+{% block nav-products %}<li class="active"><a href="#">Products</a></li>{% endblock %}
+
 {% block content %}
-        <div class="container">
-          						<ul class="nav">
-                   <!--      <li><input type="text" /></li> -->
-            						<li ><a href="/">Home</a></li>
-                        <li class="active"><a href="#">Products</a></li>
-                        <li><a href="/events/">Photos</a></li>
-                        <li><a href="">Issues</a></li>
-        					</div>
-      				</div>
-    			</div>
-			</div>
-		  </div>
         
         <div class="sectiontitle">
-        <div class="categorydropdown">
-          <div class="btn-group">
-            <button class="btn dropdown-toggle" data-toggle="dropdown">Pick a Category <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-              <li><a href="#">Test</a></li>
-            </ul>
-          </div>
+            <div class="categorydropdown">
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle" data-toggle="dropdown">Pick a Category <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                       <li><a href="#">Test</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
         </div>
-        <hr>
-      </div>
 
                 <ul class="thumbnails">
        

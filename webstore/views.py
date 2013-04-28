@@ -22,12 +22,10 @@ def SpecificProduct(request, productslug):
   context = {'product': product}
   return render_to_response('singleproduct.html', context, context_instance=RequestContext(request))
 
-
-def EventsAll(request):
-  categories = EventCategory.objects.all().order_by('name')
-  context = ({'events': categories})
-  return render_to_response('eventsall.html', context, context_instance=RequestContext(request))
- 
+def CategoriesAll(request):
+  categories = EventCategory.objects.all()
+  context = {'events': categories}
+  return render_to_response('categoriesall.html', context, context_instance=RequestContext(request))
 
 def Category(request, categoryslug):
   single_category = EventCategory.objects.get(slug=categoryslug)
@@ -35,6 +33,10 @@ def Category(request, categoryslug):
   context = {'events': events, 'category':single_category}
   return render_to_response('category.html', context, context_instance=RequestContext(request))
 
+def EventsAll(request):
+  categories = Event.objects.all().order_by('name')
+  context = ({'events': categories})
+  return render_to_response('eventsall.html', context, context_instance=RequestContext(request))
 
 def SpecificEvent(request, eventslug):
   event = Event.objects.get(slug=eventslug)
