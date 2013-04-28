@@ -10,11 +10,21 @@ from webstore.models import *
 import urllib
 
 # Modified from Django Snippets
-class Endpoint:
+class Endpoint(View):
     
     default_response_text = 'Nothing to see here'
     verify_url = "https://www.sandbox.paypal.com/cgi-bin/webscr"
     
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ProtectedView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return self.begin(request)
+
+    def post(self, request, *args, **kwargs):
+        return self.begin(request)
+
     def do_post(self, url, args):
         return urllib.urlopen(url, urllib.urlencode(args)).read()
     
@@ -27,10 +37,6 @@ class Endpoint:
     
     def default_response(self):
         return HttpResponse(self.default_response_text)
-    
-    @method_decorator(csrf_exempt)
-    def __call__(self,request):
-        return self.begin(self,request)
 
     def begin(self, request):
         r = None
