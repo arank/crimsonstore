@@ -15,7 +15,7 @@ class Endpoint(View):
     default_response_text = 'Nothing to see here'
     verify_url = "https://www.sandbox.paypal.com/cgi-bin/webscr"
     
-    @method_decorator(login_required)
+    @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(ProtectedView, self).dispatch(*args, **kwargs)
 
