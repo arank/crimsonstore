@@ -152,7 +152,7 @@ def verify_data(data):
   total_tax = 0
   total_ship = 0
 
-  photo_urls = {}
+  event_photos = {}
 
   # Verify each item (price, shipping, tax)
   for x in range(1, item_count + 1) :
