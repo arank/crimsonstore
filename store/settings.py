@@ -157,7 +157,7 @@ DATABASES['default'] =  dj_database_url.config()
 
 # PayPal configuration
 PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitator@thecrimson.com'
-SITE_NAME = 'http://crimsonstore.heroku.com'
+IPN_URL = '/cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt'
 
 # Email Settings
 EMAIL_USE_TLS = True

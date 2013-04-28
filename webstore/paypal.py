@@ -3,6 +3,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, Http404
 from django.template.loader import  get_template
 from django.template import Context
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from webstore.models import *
 import urllib
 
@@ -10,8 +12,8 @@ import urllib
 class Endpoint:
     
     default_response_text = 'Nothing to see here'
-    verify_url = "https://www.paypal.com/cgi-bin/webscr"
-    
+    verify_url = "https://www.sandbox.paypal.com/cgi-bin/webscr"
+
     def do_post(self, url, args):
         return urllib.urlopen(url, urllib.urlencode(args)).read()
     
@@ -24,7 +26,7 @@ class Endpoint:
     
     def default_response(self):
         return HttpResponse(self.default_response_text)
-    
+
     def __call__(self, request):
         r = None
         if request.method == 'POST':
@@ -150,7 +152,7 @@ def verify_data(data):
   total_tax = 0
   total_ship = 0
 
-  photo_urls = {}
+  event_photos = {}
 
   # Verify each item (price, shipping, tax)
   for x in range(1, item_count + 1) :
@@ -184,8 +186,7 @@ def verify_data(data):
     total_tax += tax
     total_ship += shipping
 
-    photos = Photo.objects.filter(event=db_event)
-    photo_urls[event_name] = [photo.originalURL for photo in photos]
+    event_photos[event_name] = Photo.objects.filter(event=db_event)
 
   # verifying totals
   form_tax = float(data['tax'])
@@ -209,14 +210,14 @@ def verify_data(data):
   # send email here TODO
   email = data['payer_email']
 
-  context = { 'verified'  : 'yes',
-              'business'  : settings.PAYPAL_RECEIVER_EMAIL,
-              'amount'    : total,
-              'name'      : name,
-              'email'     : email,
-              'photos'    : photo_urls,
-              'base_url'  : data['base_url'],
-              'data'      : data }
+  context = { 'verified'      : 'yes',
+              'business'      : settings.PAYPAL_RECEIVER_EMAIL,
+              'amount'        : total,
+              'name'          : name,
+              'email'         : email,
+              'event_photos'  : event_photos,
+              'base_url'      : data['base_url'],
+              'data'          : data }
 
   if send_email(context):
     return context

@@ -3,6 +3,7 @@ from django.views.generic.simple import direct_to_template
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.decorators.csrf import csrf_exempt
 from webstore.views import PaypalIPN
 
 # Uncomment the next two lines to enable the admin:
@@ -37,8 +38,9 @@ urlpatterns += patterns('webstore.views',
    url(r'^checkout-cancel/$', 'Cancel', name='cancel'),
 )
 
+# url for PayPal
+urlpatterns += patterns('webstore.views',
+  url(r'^cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt/$', PaypalIPN()))
+
 # static media and file URLs
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + staticfiles_urlpatterns()
-
-# url for PayPal
-(r'^cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt', PaypalIPN())

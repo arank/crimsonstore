@@ -47,7 +47,9 @@ def SpecificEvent(request, eventslug):
 
 def Cart(request):
   base_url = request.build_absolute_uri('/checkout')
-  context = {'base_url' : base_url}
+  ipn_url = request.build_absolute_uri(settings.IPN_URL)
+  context = { 'base_url'  : base_url,
+              'ipn_url'   : ipn_url }
   return render_to_response('cart.html', context, context_instance=RequestContext(request))
 
 #########################
@@ -116,6 +118,7 @@ def Success(request):
   else:
     return render_to_response('wrong_order.html', context, context_instance=RequestContext(request))
 
+@csrf_exempt
 def Cancel(request):
   return render_to_response('cancel.html', context_instance=RequestContext(request))
 
@@ -124,7 +127,7 @@ def Cancel(request):
 class PaypalIPN(Endpoint):
 
   def process(self, data):
-    context = get_context(request,data)
+    context = verify_data(data)
     return render_to_response("success.html", context, context_instance=RequestContext(request))
       
   def process_invalid(self, data):
