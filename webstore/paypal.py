@@ -80,7 +80,7 @@ def wrong_order(error, name, right_value, wrong_value):
               'item_name'     : name,
               'right_value'   : right_value,
               'wrong_value'   : wrong_value }
-  if send_mail(context):
+  if send_email(context):
     return context
   else:
     raise Http404
@@ -211,7 +211,7 @@ def verify_data(data):
               'name'      : name,
               'email'     : email }
 
-  if send_mail(context):
+  if send_email(context):
     return context
   else:
     raise Http404
