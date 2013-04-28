@@ -1,8 +1,11 @@
 The Crimson Store:
 
 {% if verified == 'no' %}
-    There was an error processing an order from {{ email }} to {{ business }}. The order {{ error }}. For {{ item_name }} the expected value was {{ right_value }}, but the received value was {{ wrong_value }}.
+    There was an error processing an order from {{ email }} to {{ business }}. The order {{ error }}. For {{ item_name }} the expected value was {{ right_value }}, but the received value was {{ wrong_value }}. We cannot email you the links to your purchase. Please contact thecrimson.com for more information.
 {% else %}
-	Thank you, {{ name }} for your payment of ${{ amount }} to {{ business }}. Your transaction has been completed, and a receipt for your purchase has been emailed to you. Your photo(s) are also on their way. Check your email ({{ email }}) for more information. You may log into your account at www.paypal.com to view details of this transaction.
+    Thank you, {{ name }} for your payment of ${{ amount }} to {{ business }}. This is your receipt. Here are the URLs to your purchased photos:
+    {% for photo_url in photos %}
+        * {{ photo_url }}
+    {% endfor %}
 {% endif %}
               	Copyright &#169; 2013 by The Harvard Crimson

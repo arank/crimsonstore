@@ -63,23 +63,27 @@ def send_email(data):
   subject, from_email = 'CrimsonStore Purchase', 'crimsonstore@thecrimson.com'
   text_content = plaintext.render(d)
   html_content = html.render(d)
-  to_list = [settings.PAYPAL_RECEIVER_EMAIL,data['email']]
+  to_list = [data['email']]
+  if data['verified'] = 'no':
+    to_list.append(settings.PAYPAL_RECEIVER_EMAIL)
 
   for to in to_list:
     msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
     msg.attach_alternative(html_content, "text/html")
+    msg.content_subtype = "html"
     msg.send()
 
   return True
 
 # function to gracefully throw Wrong Order error
-def wrong_order(error, name, right_value, wrong_value):
+def wrong_order(error, name, right_value, wrong_value,base_url):
   context = { 'verified'      : 'no',
               'business'      : settings.PAYPAL_RECEIVER_EMAIL,
               'error'         : error,
               'item_name'     : name,
               'right_value'   : right_value,
-              'wrong_value'   : wrong_value }
+              'wrong_value'   : wrong_value,
+              'base_url'      : base_url }
   if send_email(context):
     return context
   else:
@@ -115,11 +119,11 @@ def verify_data(data):
     # payer verification
     payment_status = data.get('payment_status', '')
     if payment_status != 'Completed':
-      wrong_order('was uncompleted', name, 'Completed', payment_status)
+      wrong_order('was uncompleted', name, 'Completed', payment_status,data['base_url'])
 
     payer_status = data.get('payer_status', '')
     if payer_status != 'verified':
-      wrong_order('was unverified', name, 'verified', payer_status)
+      wrong_order('was unverified', name, 'verified', payer_status,data['base_url'])
 
   # customer name
   first_name = data.get('first_name', '')
@@ -131,11 +135,11 @@ def verify_data(data):
   # item verification
   item_count = int(data.get('num_cart_items', '0'))
   if item_count == 0:
-    wrong_order('had zero items', name, 1, item_count)
+    wrong_order('had zero items', name, 1, item_count,data['base_url'])
 
   form_total = float(data['mc_gross']) # - float(data['mc_fee'])
   if form_total == 0.0:
-    wrong_order('had to payment', name, 1., total)
+    wrong_order('had to payment', name, 1., total,data['base_url'])
 
   # other data
   tax = float(data.get('tax','0.0'))
@@ -168,13 +172,13 @@ def verify_data(data):
     (subtotal, tax, shipping) = subtotal_ship_tax(0.0, 0.0, p_quantity, db_price)
 
     if subtotal != p_price:
-      wrong_order('had wrong price', event_name, subtotal, p_price)
+      wrong_order('had wrong price', event_name, subtotal, p_price,data['base_url'])
 
     if tax != p_tax:
-      wrong_order('had wrong tax', event_name, tax, p_tax)
+      wrong_order('had wrong tax', event_name, tax, p_tax,data['base_url'])
 
     if shipping != p_shipping:
-      wrong_order('had wrong shippping', event_name, shipping, p_shipping)
+      wrong_order('had wrong shippping', event_name, shipping, p_shipping,data['base_url'])
 
     total_price += subtotal
     total_tax += tax
@@ -188,19 +192,19 @@ def verify_data(data):
   form_shipping = float(data['mc_handling']) + float(data['mc_shipping'])
   form_currency = data['mc_currency']
   if total_tax != form_tax :
-    wrong_order('tax', name, total_tax, form_tax)
+    wrong_order('tax', name, total_tax, form_tax,data['base_url'])
 
   if total_ship != form_shipping:
     wrong_order('had wrong shipping', 'name', total_ship, form_shipping)
 
   # verifying payment is in US dollars
   if form_currency != 'USD':
-      wrong_order('had wrong currency', name, 'USD', form_currency)
+      wrong_order('had wrong currency', name, 'USD', form_currency,data['base_url'])
 
   total = total_ship + total_tax + total_price
 
   if total != form_total:
-    wrong_order('had wrong total', name, total, form_total)
+    wrong_order('had wrong total', name, total, form_total,data['base_url'])
 
   # send email here TODO
   email = data['payer_email']
@@ -209,7 +213,9 @@ def verify_data(data):
               'business'  : settings.PAYPAL_RECEIVER_EMAIL,
               'amount'    : total,
               'name'      : name,
-              'email'     : email }
+              'email'     : email,
+              'photos'    : photo_urls,
+              'base_url'  : data['base_url'] }
 
   if send_email(context):
     return context
