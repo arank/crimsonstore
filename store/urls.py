@@ -39,7 +39,7 @@ urlpatterns += patterns('webstore.views',
 
 # url for PayPal
 urlpatterns += patterns('webstore.views',
-  url(r'^cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt/$', csrf_exempt(PaypalIPN()))
+  url(r'^cr!ms0n/p4yp5l/E2E7135958416E4B12258FD3641FD/OwEv0w0ZVt/$', PaypalIPN())
 
 # static media and file URLs
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + staticfiles_urlpatterns()
