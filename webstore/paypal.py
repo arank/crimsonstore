@@ -48,7 +48,6 @@ class Endpoint:
     def process_invalid(self, data):
         pass
 
-@csrf_exempt
 class AppEngineEndpoint(Endpoint):
     
     def do_post(self, url, args):
