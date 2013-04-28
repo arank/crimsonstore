@@ -104,6 +104,8 @@ def Success(request):
   else:
     return redirect('/')
 
+  data['base_url'] = request.build_absolute_uri()
+
   # Takes care of verifying data and emailing
   context = verify_data(data)
 
