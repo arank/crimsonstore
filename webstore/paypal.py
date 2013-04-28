@@ -1,6 +1,7 @@
 from django.conf import settings
-from webstore.models import *
+from django.core.mail import send_mail
 from django.http import HttpResponse
+from webstore.models import *
 import urllib
 
 # Modified from Django Snippets
@@ -63,6 +64,11 @@ def verify_data(data):
                 'item_name'     : name,
                 'right_value'   : right_value,
                 'wrong_value'   : wrong_value }
+    
+    # notify the crimson
+    email = data['payer_email']
+    send_mail('Crimsonstore Purchase', 'TestMessage','crimsonstore@thecrimson.com',
+    [settings.PAYPAL_RECEIVER_EMAIL])
     return context
 
   # function to verify overall data
@@ -166,6 +172,8 @@ def verify_data(data):
 
   # send email here TODO
   email = data['payer_email']
+  send_mail('Crimsonstore Purchase', 'TestMessage','crimsonstore@thecrimson.com',
+    [email])
 
   context = { 'verified'  : 'yes',
               'business'  : settings.PAYPAL_RECEIVER_EMAIL,

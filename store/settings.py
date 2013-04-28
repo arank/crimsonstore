@@ -155,11 +155,18 @@ ADMIN_MEDIA_PREFIX = "/static/admin/"
 import dj_database_url
 DATABASES['default'] =  dj_database_url.config()
 
+# PayPal configuration
+PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitator@thecrimson.com'
+SITE_NAME = 'http://crimsonstore.heroku.com'
+
+# Email Settings
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'crimsonstore.test@gmail.com'
+EMAIL_HOST_PASSWORD = ''
+
 try:
     from local_settings import *
 except ImportError:
     pass
-
-# PayPal configuration
-PAYPAL_RECEIVER_EMAIL = 'businessmanager-facilitator@thecrimson.com'
-SITE_NAME = 'http://crimsonstore.heroku.com'
