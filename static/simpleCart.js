@@ -928,6 +928,7 @@
 							, upload		: "1"
 							, currency_code : simpleCart.currency().code
 							, business		: opts.email
+							, notify_url	: opts.ipn_url
 							, rm			: opts.method === "GET" ? "0" : "2"
 							, tax_cart		: (simpleCart.tax()*1).toFixed(2)
 							, handling_cart : (simpleCart.shipping()*1).toFixed(2)
