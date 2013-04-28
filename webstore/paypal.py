@@ -186,8 +186,7 @@ def verify_data(data):
     total_tax += tax
     total_ship += shipping
 
-    photos = Photo.objects.filter(event=db_event)
-    photo_urls[event_name] = [photo.originalURL for photo in photos]
+    photos[event_name] = Photo.objects.filter(event=db_event)
 
   # verifying totals
   form_tax = float(data['tax'])
@@ -216,7 +215,7 @@ def verify_data(data):
               'amount'    : total,
               'name'      : name,
               'email'     : email,
-              'photos'    : photo_urls,
+              'photos'    : photos,
               'base_url'  : data['base_url'],
               'data'      : data }
 
