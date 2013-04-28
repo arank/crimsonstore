@@ -60,7 +60,7 @@ def send_email(data):
   html = get_template('email.html')
 
   d = Context(data)
-  suject, from_email = 'CrimsonStore Purchase', 'crimsonstore@thecrimson.com'
+  subject, from_email = 'CrimsonStore Purchase', 'crimsonstore@thecrimson.com'
   text_content = plaintext.render(d)
   html_content = html.render(d)
   to_list = [settings.PAYPAL_RECEIVER_EMAIL,data['email']]
