@@ -34,14 +34,23 @@ def Category(request, categoryslug):
   return render_to_response('category.html', context, context_instance=RequestContext(request))
 
 def EventsAll(request):
-  categories = Event.objects.all().order_by('name')
+  categories = Event.objects.all().order_by('name')[:20]
   context = ({'events': categories})
   return render_to_response('eventsall.html', context, context_instance=RequestContext(request))
 
 def SpecificEvent(request, eventslug):
   event = Event.objects.get(slug=eventslug)
   photos = event.photos.all()#another way to get children via back reference
-  context = {'event': event, 'photos': photos}
+  NUM_COLS=4
+  grid = []
+  for i in range(len(photos)/NUM_COLS + 1):
+    row = []
+    for j in range(NUM_COLS):
+      if i*NUM_COLS + j + 1 < len(photos):
+        row.append(photos[i*NUM_COLS + j])
+    grid.append(row)
+
+  context = {'event': event, 'photos': grid}
   return render_to_response('singleevent.html', context, context_instance=RequestContext(request))
 
 

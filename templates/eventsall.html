@@ -23,8 +23,8 @@
                             <table>
                               <tr>
                                 {% for photo in event.get_key_images %}
-                                <td>
-                                  <img alt="300x200" style="width: 300px;" src="{{ photo.smallURL }}">
+                                <td style="overflow:hidden">
+                                  <img alt="300x200" style="height: 300px; margin: 5px" src="{{ photo.smallURL }}">
                                 </td>
                                 {% endfor %}
                               </tr>

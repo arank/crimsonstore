@@ -19,8 +19,10 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-   url(r'^admin/', include(admin.site.urls)),
-   url(r'^$', direct_to_template, {'template': 'index.html'})
+    url(r'^admin/syncdb/$', 'webstore.admin.sync_setup'),
+    url(r'^admin/syncdb/sync_async/$', 'webstore.admin.sync_async'),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', direct_to_template, {'template': 'index.html'})
 )
 
 # webstore.views URLs

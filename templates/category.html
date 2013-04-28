@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}        
-        <div class="sectiontitle">
+<!--         <div class="sectiontitle">
         <div class="categorydropdown">
           <div class="btn-group">
             <button class="btn dropdown-toggle" data-toggle="dropdown">Order By <span class="caret"></span></button>
@@ -10,7 +10,7 @@
           </div>
         </div>
         <hr>
-      </div>
+      </div> -->
 
                 <div id="eventlist">
                 {% for event in events %}
@@ -21,10 +21,8 @@
                             <table>
                               <tr>
                                 {% for photo in event.get_key_images %}
-                                <td>
-                                  
-                                  <img style="width: 300px" src="{{ photo.smallURL }}">
-                                  
+                                <td style="overflow:hidden">
+                                  <img style="height: 300px;margin:5px" src="{{ photo.smallURL }}">
                                 </td>
                                 {% endfor %}
                               </tr>

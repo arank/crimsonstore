@@ -1,0 +1,80 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Django Admin | Sync Database{% endblock %}
+{% block extrahead %} 
+<style type="text/css">
+    .message
+    {
+        font-weight: bold;
+        font-size  : 18pt;
+    }
+
+    .warning
+    {
+        color: red;
+    }
+    .success
+    {
+        color: green;
+    }
+</style>
+
+<script src="{{ URL_BASE }}{{ MEDIA_URL }}js/jquery.js"></script>
+<script src="{{ URL_BASE }}{{ MEDIA_URL }}js/jquery.cookie.js"></script>
+
+<script type="text/javascript">
+var diff = {{ diff }};
+var success_html = "Local database is up to date!";
+var csrftoken = $.cookie('csrftoken');
+$(function(){
+    $("#sync").click(function(){
+        var data = {"n": diff,
+                    "csrfmiddlewaretoken": '{{ csrf_token }}'};
+        $("#sync").attr("disabled", "disabled");
+        $("#loader").show();
+        $.post("/admin/syncdb/sync_async/", data, function(data){
+            $("#loader").hide();
+            if (data.success == false)
+            {
+                $("#sync").removeAttr("disabled");
+                $("#message").addClass("warning").html(data.message).show();
+            }
+            if (data.success == true)
+            {
+                $("#mesasge").hide();
+                $("#local").html(data.n_local);
+                $("#remote").html(data.n_remote);
+                diff = data.n_remote - data.n_local;
+                if(diff == 0)
+                {
+                    $("#status").removeClass("warning").addClass("success")
+                        .html(success_html);
+                }
+                else
+                {
+                    $("#diff").html(diff);
+                    $("#sync").removeAttr("disabled");
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+
+<p class="message">There are <span id="local">{{ n_local }}</span> albums in the local databse and <span id="remote">{{ n_remote }}</span> albums on SmugMug.</p>
+
+{% if message_class == "warning" %}
+<p id="status" class="message {{ message_class }}">Local database is behind by <span id="diff">{{diff}}</span> albums. Updating the database can take up to a few minutes per album, depending on the album's length.</p>
+<p class="message" id="message" style="display: none"></p>
+<button id="sync" type="button">Update database</button>
+<img id="loader" src="/media/img/loader.gif" alt="Updating database..." style="display:none">
+{% else %}
+<p id="status" class="message {{ message_class }}">Local database is up to date!</p>
+<button id="sync" type="button" disabled>Update database</button>
+{% endif %}
+
+
+
+{% endblock %}
