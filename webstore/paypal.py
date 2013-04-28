@@ -10,7 +10,7 @@ import urllib
 class Endpoint:
     
     default_response_text = 'Nothing to see here'
-    verify_url = "https://www.paypal.com/cgi-bin/webscr"
+    verify_url = "https://www.sandbox.paypal.com/cgi-bin/webscr"
     
     def do_post(self, url, args):
         return urllib.urlopen(url, urllib.urlencode(args)).read()
