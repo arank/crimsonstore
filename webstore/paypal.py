@@ -5,25 +5,14 @@ from django.template.loader import  get_template
 from django.template import Context
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import View
 from webstore.models import *
 import urllib
 
 # Modified from Django Snippets
-class Endpoint(View):
+class Endpoint:
     
     default_response_text = 'Nothing to see here'
     verify_url = "https://www.sandbox.paypal.com/cgi-bin/webscr"
-    
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super(ProtectedView, self).dispatch(*args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        return self.begin(request)
-
-    def post(self, request, *args, **kwargs):
-        return self.begin(request)
 
     def do_post(self, url, args):
         return urllib.urlopen(url, urllib.urlencode(args)).read()
@@ -38,7 +27,7 @@ class Endpoint(View):
     def default_response(self):
         return HttpResponse(self.default_response_text)
 
-    def begin(self, request):
+    def __call__(self, request):
         r = None
         if request.method == 'POST':
             data = dict(request.POST.items())
