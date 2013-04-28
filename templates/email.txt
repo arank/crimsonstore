@@ -6,8 +6,8 @@ The Crimson Store:
 	Thank you, {{ name }} for your payment of ${{ amount }} to {{ business }}. This is your receipt. Here are the URLs to your purchased photos:
 	{% for event in photos %}
 		{% for url in event %}
-	     * {{ photo_url }}
-	     
+	     * {{ url }}
+
         {% endfor %}
     {% endfor %}
 {% endif %}
