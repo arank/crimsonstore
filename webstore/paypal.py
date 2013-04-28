@@ -3,6 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse, Http404
 from django.template.loader import  get_template
 from django.template import Context
+from django.views.decorators.csrf import csrf_exempt
 from webstore.models import *
 import urllib
 
