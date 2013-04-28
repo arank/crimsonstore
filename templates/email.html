@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8"/>
+
+        <meta name="description" content="The Crimson Store"/>
+
+        <link rel="shortcut icon" href="{{ base_url }}/media/img/Crimson_Store_Logo_2_small.ico"> <!-- this is the small photo in the tab -->
+        <link rel="apple-touch-icon" href="#.png" />  <!-- this uploads the icon for apple's homescreen shortcuts-->
+        <meta name="apple-mobile-web-app-title" content="#">  <!-- this changes the default name when on the homescreen in apple-->
+        <link href="{{ base_url }}/media/css/bootstrap.css" rel="stylesheet"/> <!-- if folder /css folder is in the same spot as the html file-->
+        <link href="{{ base_url }}/media/css/bootstrap-responsive.css" rel="stylesheet"/>
+        <link href="{{ base_url }}/media/css/stylesheet.css" rel="stylesheet"/>
+                <title>{% block title %}The Crimson Store{% endblock %}</title>
+    </head>
+
+    <body>
+    	<div>
+    	{% if verified == 'no' %}
+		    There was an error processing an order from {{ email }} to {{ business }}. The order {{ error }}. For {{ item_name }} the expected value was {{ right_value }}, but the received value was {{ wrong_value }}. We cannot email you the links to your purchase. Please contact thecrimson.com for more information.
+		{% else %}
+			Thank you, {{ name }} for your payment of ${{ amount }} to {{ business }}. This is your receipt. Here are the URLs to your purchased photos:
+			{% for event in photos %}
+				{% for url in event %}
+			     * {{ url }}</br>
+                {% endfor %}
+            {% endfor %}
+		{% endif %}
+		</div>
+		<div id="bottom">
+        	<div class="footer crimson">
+            	<a class="footer" href="http://www.thecrimson.com">about us</a> | 
+              	<a class="footer" target="_blank" href="mailto:arankhanna@college.harvard.edu?subject=Crimson%20Online%20Store">contact us</a> <br/>
+              	Copyright &#169; 2013 by The Harvard Crimson
+          	</div>
+      	</div>
+	</body>
+</html>

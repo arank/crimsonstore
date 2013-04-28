@@ -1,0 +1,14 @@
+The Crimson Store:
+
+{% if verified == 'no' %}
+    There was an error processing an order from {{ email }} to {{ business }}. The order {{ error }}. For {{ item_name }} the expected value was {{ right_value }}, but the received value was {{ wrong_value }}. We cannot email you the links to your purchase. Please contact thecrimson.com for more information.
+{% else %}
+	Thank you, {{ name }} for your payment of ${{ amount }} to {{ business }}. This is your receipt. Here are the URLs to your purchased photos:
+	{% for event in photos %}
+		{% for url in event %}
+	     * {{ url }}
+
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+              	Copyright &#169; 2013 by The Harvard Crimson
