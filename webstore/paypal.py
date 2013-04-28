@@ -64,7 +64,7 @@ def send_email(data):
   text_content = plaintext.render(d)
   html_content = html.render(d)
   to_list = [data['email']]
-  if data['verified'] = 'no':
+  if data['verified'] == 'no':
     to_list.append(settings.PAYPAL_RECEIVER_EMAIL)
 
   for to in to_list:
@@ -215,7 +215,8 @@ def verify_data(data):
               'name'      : name,
               'email'     : email,
               'photos'    : photo_urls,
-              'base_url'  : data['base_url'] }
+              'base_url'  : data['base_url'],
+              'data'      : data }
 
   if send_email(context):
     return context
