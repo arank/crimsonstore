@@ -7,6 +7,7 @@ from webstore.models import *
 import urllib
 
 # Modified from Django Snippets
+@csrf_exempt
 class Endpoint:
     
     default_response_text = 'Nothing to see here'
@@ -25,6 +26,7 @@ class Endpoint:
     def default_response(self):
         return HttpResponse(self.default_response_text)
     
+    @csrf_exempt
     def __call__(self, request):
         r = None
         if request.method == 'POST':
@@ -45,6 +47,7 @@ class Endpoint:
     def process_invalid(self, data):
         pass
 
+@csrf_exempt
 class AppEngineEndpoint(Endpoint):
     
     def do_post(self, url, args):
