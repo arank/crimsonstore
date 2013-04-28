@@ -116,6 +116,7 @@ def Success(request):
   else:
     return render_to_response('wrong_order.html', context, context_instance=RequestContext(request))
 
+@csrf_exempt
 def Cancel(request):
   return render_to_response('cancel.html', context_instance=RequestContext(request))
 
