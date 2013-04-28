@@ -186,7 +186,7 @@ def verify_data(data):
     total_tax += tax
     total_ship += shipping
 
-    photos[event_name] = Photo.objects.filter(event=db_event)
+    event_photos[event_name] = Photo.objects.filter(event=db_event)
 
   # verifying totals
   form_tax = float(data['tax'])
@@ -210,14 +210,14 @@ def verify_data(data):
   # send email here TODO
   email = data['payer_email']
 
-  context = { 'verified'  : 'yes',
-              'business'  : settings.PAYPAL_RECEIVER_EMAIL,
-              'amount'    : total,
-              'name'      : name,
-              'email'     : email,
-              'photos'    : photos,
-              'base_url'  : data['base_url'],
-              'data'      : data }
+  context = { 'verified'      : 'yes',
+              'business'      : settings.PAYPAL_RECEIVER_EMAIL,
+              'amount'        : total,
+              'name'          : name,
+              'email'         : email,
+              'event_photos'  : event_photos,
+              'base_url'      : data['base_url'],
+              'data'          : data }
 
   if send_email(context):
     return context
