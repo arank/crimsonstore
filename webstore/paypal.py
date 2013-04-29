@@ -174,13 +174,13 @@ def verify_data(data):
     (subtotal, tax, shipping) = subtotal_ship_tax(0.0, 0.0, p_quantity, db_price)
 
     if subtotal != p_price:
-      wrong_order('had wrong price', event_name, subtotal, p_price,data['base_url'])
+      wrong_order('had wrong price', event_name, subtotal, p_price, data['base_url'])
 
     if tax != p_tax:
-      wrong_order('had wrong tax', event_name, tax, p_tax,data['base_url'])
+      wrong_order('had wrong tax', event_name, tax, p_tax, data['base_url'])
 
     if shipping != p_shipping:
-      wrong_order('had wrong shippping', event_name, shipping, p_shipping,data['base_url'])
+      wrong_order('had wrong shippping', event_name, shipping, p_shipping, data['base_url'])
 
     total_price += subtotal
     total_tax += tax
